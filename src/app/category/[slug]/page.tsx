@@ -1,3 +1,5 @@
+// app/category/[slug]/page.tsx
+
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import Link from 'next/link';
@@ -6,15 +8,19 @@ interface CategoryPageProps {
   params: { slug: string };
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const decodedCategory = decodeURIComponent(params.slug);
+async function fetchProductsByCategory(slug: string) {
+  const decodedCategory = decodeURIComponent(slug);
   const q = query(collection(db, 'products'), where('category', '==', decodedCategory));
   const snapshot = await getDocs(q);
-  const products = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+export default async function CategoryPage({ params }: CategoryPageProps) {
+  const products = await fetchProductsByCategory(params.slug); // Fetch products based on the slug
 
   return (
     <div className="max-w-7xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">Category: {decodedCategory}</h2>
+      <h2 className="text-2xl font-bold mb-4">Category: {decodeURIComponent(params.slug)}</h2>
       {products.length === 0 && <p>No products found in this category.</p>}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
