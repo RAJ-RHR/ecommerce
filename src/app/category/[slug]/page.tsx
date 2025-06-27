@@ -4,10 +4,6 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import Link from 'next/link';
 
-interface CategoryPageProps {
-  params: { slug: string };
-}
-
 async function fetchProductsByCategory(slug: string) {
   const decodedCategory = decodeURIComponent(slug);
   const q = query(collection(db, 'products'), where('category', '==', decodedCategory));
@@ -15,8 +11,8 @@ async function fetchProductsByCategory(slug: string) {
   return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
-export default async function CategoryPage({ params }: CategoryPageProps) {
-  const products = await fetchProductsByCategory(params.slug); // Fetch products based on the slug
+export default async function CategoryPage({ params }: { params: { slug: string } }) {
+  const products = await fetchProductsByCategory(params.slug);
 
   return (
     <div className="max-w-7xl mx-auto p-4">
