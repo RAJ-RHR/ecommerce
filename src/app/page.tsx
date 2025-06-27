@@ -14,8 +14,8 @@ type Product = {
   id: string;
   name: string;
   image: string;
-  price: number;
-  offer_price: number;
+  price: string;
+  offer_price: string;
   category: string;
 };
 
@@ -37,7 +37,7 @@ export default function HomePage() {
     const productsRef = collection(db, 'products');
 
     // Now, apply the query with orderBy
-    let productsQuery = productsRef;
+    let productsQuery;
 
     if (sort === 'low') {
       productsQuery = query(productsRef, orderBy('offer_price'));
@@ -45,14 +45,21 @@ export default function HomePage() {
       productsQuery = query(productsRef, orderBy('offer_price', 'desc'));
     } else if (sort === 'latest') {
       productsQuery = query(productsRef, orderBy('createdAt', 'desc'));
+    } else {
+      productsQuery = productsRef;
     }
 
     // Fetch the products based on the query
     const snapshot = await getDocs(productsQuery);
-    const data = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    })) as Product[];
+    const data = snapshot.docs.map((doc) => {
+      const docData = doc.data();
+      return {
+        id: doc.id,
+        ...docData,
+        price: String(docData.price),
+        offer_price: String(docData.offer_price),
+      };
+    }) as Product[];
 
     setProducts(data);
   };

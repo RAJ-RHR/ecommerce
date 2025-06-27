@@ -69,11 +69,13 @@ export default function ShopPage() {
   };
 
   const fetchProducts = async () => {
-    let q = collection(db, 'products');
+    const productsRef = collection(db, 'products');
+    let q;
 
-    if (sort === 'low') q = query(q, orderBy('offer_price'));
-    else if (sort === 'high') q = query(q, orderBy('offer_price', 'desc'));
-    else if (sort === 'latest') q = query(q, orderBy('createdAt', 'desc'));
+    if (sort === 'low') q = query(productsRef, orderBy('offer_price'));
+    else if (sort === 'high') q = query(productsRef, orderBy('offer_price', 'desc'));
+    else if (sort === 'latest') q = query(productsRef, orderBy('createdAt', 'desc'));
+    else q = productsRef;
 
     const snapshot = await getDocs(q);
     const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];

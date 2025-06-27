@@ -23,6 +23,7 @@ export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+  const [category, setCategory] = useState<string>('');
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -32,7 +33,9 @@ export default function ProductPage() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        setProduct({ id: docSnap.id, ...(docSnap.data() as Product) });
+        const data = docSnap.data() as Product;
+        const { id: _ignored, ...rest } = data;
+        setProduct({ id: docSnap.id, ...rest });
       }
 
       setLoading(false);
@@ -71,9 +74,8 @@ export default function ProductPage() {
       <Header />
 
       <main className="flex flex-col md:flex-row">
-        <aside className="md:w-1/5 p-4 border-r">
-          <CategorySidebar />
-        </aside>
+          <CategorySidebar setCategory={setCategory} />
+        
 
         <section className="md:w-4/5 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

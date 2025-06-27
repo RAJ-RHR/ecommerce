@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const categories = [
@@ -14,11 +14,16 @@ const categories = [
   'Skin Care',
 ];
 
-export default function CategorySidebar() {
+type CategorySidebarProps = {
+  setCategory: Dispatch<SetStateAction<string>>;
+};
+
+export default function CategorySidebar({ setCategory }: CategorySidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
 
   const handleClick = (category: string) => {
+    setCategory(category);
     const slug = encodeURIComponent(category);
     router.push(`/category/${slug}`);
   };
