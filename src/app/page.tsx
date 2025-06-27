@@ -33,12 +33,12 @@ export default function HomePage() {
   }, [sort]);
 
   const fetchProducts = async () => {
-    // Reference to the products collection
+    // First, create the collection reference
     const productsRef = collection(db, 'products');
 
-    // Create the query based on sorting preference
+    // Now, apply the query with orderBy
     let productsQuery = productsRef;
-    
+
     if (sort === 'low') {
       productsQuery = query(productsRef, orderBy('offer_price'));
     } else if (sort === 'high') {
