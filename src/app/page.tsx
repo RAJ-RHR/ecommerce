@@ -23,7 +23,7 @@ type CartItem = Product & { quantity: number };
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const { cartItems, addToCart, increaseQty, decreaseQty } = useCart();
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('');
   const [category, setCategory] = useState('');
@@ -32,63 +32,50 @@ export default function HomePage() {
     fetchProducts();
   }, [sort]);
 
-  useEffect(() => {
-    const stored = localStorage.getItem('cart');
-    if (stored) setCart(JSON.parse(stored));
-  }, []);
-
   const fetchProducts = async () => {
-    let q = collection(db, 'products');
-    if (sort === 'low') q = query(q, orderBy('offer_price'));
-    else if (sort === 'high') q = query(q, orderBy('offer_price', 'desc'));
-    else if (sort === 'latest') q = query(q, orderBy('createdAt', 'desc'));
+    // Reference to the products collection
+    const productsRef = collection(db, 'products');
 
-    const snapshot = await getDocs(q);
-    const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
+    // Create the query based on sorting preference
+    let productsQuery = productsRef;
+    
+    if (sort === 'low') {
+      productsQuery = query(productsRef, orderBy('offer_price'));
+    } else if (sort === 'high') {
+      productsQuery = query(productsRef, orderBy('offer_price', 'desc'));
+    } else if (sort === 'latest') {
+      productsQuery = query(productsRef, orderBy('createdAt', 'desc'));
+    }
+
+    // Fetch the products based on the query
+    const snapshot = await getDocs(productsQuery);
+    const data = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Product[];
+
     setProducts(data);
   };
 
-  const updateCart = (newCart: CartItem[]) => {
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
-  };
-
-  const addToCart = (product: Product) => {
-    const updated = [...cart, { ...product, quantity: 1 }];
-    updateCart(updated);
-  };
-
-  const increaseQty = (id: string) => {
-    const updated = cart.map(item =>
-      item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-    );
-    updateCart(updated);
-  };
-
-  const decreaseQty = (id: string) => {
-    const updated = cart
-      .map(item =>
-        item.id === id ? { ...item, quantity: item.quantity - 1 } : item
-      )
-      .filter(item => item.quantity > 0);
-    updateCart(updated);
-  };
-
-  const filtered = products.filter(product => {
+  const filtered = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = category ? product.category === category : true;
     return matchesSearch && matchesCategory;
   });
 
+  const handleAddToCart = (product: Product) => {
+    addToCart({ ...product, quantity: 1 });
+  };
+
   return (
     <>
       <Header />
-    <Carousel />
+      <Carousel />
       <main className="flex flex-col md:flex-row">
         <div className="md:w-1/5 p-4 border-r">
           <CategorySidebar setCategory={setCategory} />
         </div>
-  
+
         <div className="md:w-4/5 p-4">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
             <input
@@ -111,8 +98,8 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {filtered.map(product => {
-              const inCart = cart.find(item => item.id === product.id);
+            {filtered.map((product) => {
+              const inCart = cartItems.find((item) => item.id === product.id);
 
               return (
                 <div key={product.id} className="border rounded-lg shadow-sm p-4 text-center relative group">
@@ -146,14 +133,14 @@ export default function HomePage() {
                       </div>
                       <Link
                         href="/cart"
-                         className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
+                        className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
                       >
                         Go to Cart
                       </Link>
                     </>
                   ) : (
                     <button
-                      onClick={() => addToCart(product)}
+                      onClick={() => handleAddToCart(product)}
                       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2"
                     >
                       Add to Cart
