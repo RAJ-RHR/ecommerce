@@ -1,83 +1,57 @@
 'use client';
 
-import React, {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  ReactNode,
-} from 'react';
-import { usePathname } from 'next/navigation';
+import { createContext, useContext, useEffect, useState } from 'react';
 
-type Product = {
+export type Product = {
   id: string;
   name: string;
-  price: string;
-  offer_price: string;
   image: string;
+  price: number;
+  offer_price: number;
+  category: string;
+  label?: string;
+  description?: string;
+};
+
+export type CartItem = Product & {
   quantity: number;
 };
 
 type CartContextType = {
-  cartItems: Product[];
+  cartItems: CartItem[];
   addToCart: (product: Product) => void;
   removeFromCart: (id: string) => void;
   increaseQty: (id: string) => void;
   decreaseQty: (id: string) => void;
   clearCart: () => void;
-  getTotalItems: () => number;
-  getTotalPrice: () => number;
+  updateQuantity: (id: string, quantity: number) => void;
+  totalQuantity: number;
+  totalAmount: number;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
-export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cartItems, setCartItems] = useState<Product[]>([]);
-  const pathname = usePathname();
+export const CartProvider = ({ children }: { children: React.ReactNode }) => {
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
-  // Load cart from localStorage on mount and on route change
   useEffect(() => {
     const stored = localStorage.getItem('cart');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          setCartItems(parsed);
-        }
-      } catch (e) {
-        console.error('Failed to parse cart from localStorage:', e);
-      }
-    }
-  }, [pathname]);
+    if (stored) setCartItems(JSON.parse(stored));
+  }, []);
 
-  // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  // Sync cart across tabs
-  useEffect(() => {
-    const syncCart = (e: StorageEvent) => {
-      if (e.key === 'cart') {
-        const updatedCart = e.newValue ? JSON.parse(e.newValue) : [];
-        setCartItems(updatedCart);
-      }
-    };
-
-    window.addEventListener('storage', syncCart);
-    return () => window.removeEventListener('storage', syncCart);
-  }, []);
-
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
-      const existing = prev.find((p) => p.id === product.id);
+      const existing = prev.find((item) => item.id === product.id);
       if (existing) {
-        return prev.map((p) =>
-          p.id === product.id ? { ...p, quantity: p.quantity + 1 } : p
+        return prev.map((item) =>
+          item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item
         );
-      } else {
-        return [...prev, { ...product, quantity: 1 }];
       }
+      return [...prev, { ...product, quantity: 1 }];
     });
   };
 
@@ -87,8 +61,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   const increaseQty = (id: string) => {
     setCartItems((prev) =>
-      prev.map((p) =>
-        p.id === id ? { ...p, quantity: p.quantity + 1 } : p
+      prev.map((item) =>
+        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
@@ -96,28 +70,24 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   const decreaseQty = (id: string) => {
     setCartItems((prev) =>
       prev
-        .map((p) =>
-          p.id === id ? { ...p, quantity: p.quantity - 1 } : p
+        .map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
         )
-        .filter((p) => p.quantity > 0)
+        .filter((item) => item.quantity > 0)
     );
   };
 
-  const clearCart = () => {
-    setCartItems([]);
-  };
-
-  const getTotalItems = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
-
-  const getTotalPrice = () => {
-    return cartItems.reduce(
-      (total, item) =>
-        total + item.quantity * parseFloat(item.offer_price || item.price),
-      0
+  const updateQuantity = (id: string, quantity: number) => {
+    if (quantity <= 0) return removeFromCart(id);
+    setCartItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, quantity } : item))
     );
   };
+
+  const clearCart = () => setCartItems([]);
+
+  const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  const totalAmount = cartItems.reduce((sum, item) => sum + item.quantity * item.offer_price, 0);
 
   return (
     <CartContext.Provider
@@ -128,8 +98,9 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         increaseQty,
         decreaseQty,
         clearCart,
-        getTotalItems,
-        getTotalPrice,
+        updateQuantity,
+        totalQuantity,
+        totalAmount,
       }}
     >
       {children}

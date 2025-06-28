@@ -5,30 +5,14 @@ import { db } from '@/lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
-import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
-
-type Product = {
-  id: string;
-  name: string;
-  image: string;
-  price: string;
-  offer_price: string;
-  category: string;
-  quantity?: number;
-};
+import type { Product } from '@/context/CartContext'; // Use the unified Product type
 
 export default function ProductPage() {
   const { id } = useParams();
   const [product, setProduct] = useState<Product | null>(null);
-  const {
-    cartItems,
-    addToCart,
-    increaseQty,
-    decreaseQty,
-    removeFromCart,
-  } = useCart();
+  const { cartItems, addToCart, increaseQty, decreaseQty, removeFromCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -38,8 +22,17 @@ export default function ProductPage() {
       const docSnap = await getDoc(docRef);
 
       if (docSnap.exists()) {
-        const { id: _id, ...data } = docSnap.data() as Product;
-        setProduct({ id: docSnap.id, ...data });
+        const data = docSnap.data();
+        setProduct({
+          id: docSnap.id,
+          name: data.name,
+          image: data.image,
+          category: data.category,
+          label: data.label,
+          description: data.description,
+          price: Number(data.price),
+          offer_price: Number(data.offer_price),
+        });
       }
     };
 
@@ -60,7 +53,6 @@ export default function ProductPage() {
 
   return (
     <>
-     
       <main className="flex flex-col md:flex-row">
         <section className="md:w-4/5 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -109,7 +101,7 @@ export default function ProductPage() {
                 </>
               ) : (
                 <button
-                  onClick={() => addToCart({ ...product, quantity: 1 })}
+                  onClick={() => addToCart(product)}
                   className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
                 >
                   Add to Cart

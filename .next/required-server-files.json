@@ -14,7 +14,7 @@
     "cleanDistDir": true,
     "assetPrefix": "",
     "cacheMaxMemorySize": 52428800,
-    "configOrigin": "default",
+    "configOrigin": "next.config.js",
     "useFileSystemPublicRoutes": true,
     "generateEtags": true,
     "pageExtensions": [
@@ -49,7 +49,9 @@
       "path": "/_next/image",
       "loader": "default",
       "loaderFile": "",
-      "domains": [],
+      "domains": [
+        "res.cloudinary.com"
+      ],
       "disableStaticImages": false,
       "minimumCacheTTL": 60,
       "formats": [
@@ -96,7 +98,7 @@
         "transform": "lodash/{{member}}"
       }
     },
-    "outputFileTracingRoot": "C:\\Users\\THIS PC\\Desktop\\herbo\\ecommerce",
+    "outputFileTracingRoot": "C:\\Users\\mohan\\OneDrive\\Desktop\\Herbo\\ecommerce",
     "experimental": {
       "nodeMiddleware": false,
       "cacheLife": {
@@ -277,12 +279,12 @@
     },
     "htmlLimitedBots": "Mediapartners-Google|Slurp|DuckDuckBot|baiduspider|yandex|sogou|bitlybot|tumblr|vkShare|quora link preview|redditbot|ia_archiver|Bingbot|BingPreview|applebot|facebookexternalhit|facebookcatalog|Twitterbot|LinkedInBot|Slackbot|Discordbot|WhatsApp|SkypeUriPreview|Yeti",
     "bundlePagesRouterDependencies": false,
+    "configFileName": "next.config.js",
     "turbopack": {
-      "root": "C:\\Users\\THIS PC\\Desktop\\herbo\\ecommerce"
-    },
-    "configFileName": "next.config.js"
+      "root": "C:\\Users\\mohan\\OneDrive\\Desktop\\Herbo\\ecommerce"
+    }
   },
-  "appDir": "C:\\Users\\THIS PC\\Desktop\\herbo\\ecommerce",
+  "appDir": "C:\\Users\\mohan\\OneDrive\\Desktop\\Herbo\\ecommerce",
   "relativeAppDir": "",
   "files": [
     ".next\\routes-manifest.json",

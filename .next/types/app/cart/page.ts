@@ -1,4 +1,4 @@
-// File: C:\Users\THIS PC\Desktop\herbo\ecommerce\src\app\cart\page.tsx
+// File: C:\Users\mohan\OneDrive\Desktop\Herbo\ecommerce\src\app\cart\page.tsx
 import * as entry from '../../../../src/app/cart/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
