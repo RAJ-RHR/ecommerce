@@ -1,15 +1,16 @@
-// src/app/layout.tsx
-'use client';
 import './globals.css';
-import { CartProvider } from '@/context/CartContext';
+import ClientWrapper from './ClientWrapper'; // Import from src/app
+
+export const metadata = {
+  title: 'Your Herbal Store',
+  description: 'Buy Herbal Products Online',
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body>
-        <CartProvider>
-          {children}
-        </CartProvider>
+        <ClientWrapper>{children}</ClientWrapper>
       </body>
     </html>
   );

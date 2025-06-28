@@ -55,7 +55,7 @@ const clearCart = () => {
 
   return (
     <>
-      <Header />
+      
 
       {cart.length === 0 ? (
         <div className="p-8 text-center text-lg font-semibold">

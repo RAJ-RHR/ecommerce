@@ -1,14 +1,13 @@
-// src/app/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
-import CategorySidebar from '@/components/CategorySidebar';
 import Link from 'next/link';
-import Carousel from '@/components/Carousel';
+import { FaCheckCircle, FaLeaf, FaTruck, FaUndo } from 'react-icons/fa';
+import CategorySidebar from '@/components/CategorySidebar';
+import Footer from '@/components/Footer';
+import Image from 'next/image';
 
 type Product = {
   id: string;
@@ -19,169 +18,119 @@ type Product = {
   category: string;
 };
 
-type CartItem = Product & { quantity: number };
-
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
-    const [cart, setCart] = useState<CartItem[]>([]);
-    const [search, setSearch] = useState('');
-    const [sort, setSort] = useState('');
-    const [category, setCategory] = useState('');
-  
-    useEffect(() => {
-      fetchProducts();
-    }, [sort]);
-  
-    useEffect(() => {
-      const stored = localStorage.getItem('cart');
-      if (stored) setCart(JSON.parse(stored));
-    }, []);
-  
-    const updateCart = (newCart: CartItem[]) => {
-      setCart(newCart);
-      localStorage.setItem('cart', JSON.stringify(newCart));
-    };
-  
-    const addToCart = (product: Product) => {
-      const exists = cart.find(item => item.id === product.id);
-      if (!exists) {
-        const updated = [...cart, { ...product, quantity: 1 }];
-        updateCart(updated);
-      }
-    };
-  
-    const increaseQty = (id: string) => {
-      const updated = cart.map(item =>
-        item.id === id ? { ...item, quantity: item.quantity + 1 } : item
-      );
-      updateCart(updated);
-    };
-  
-   const decreaseQty = (id: string) => {
-    const updated = cart
-      .map(item => {
-        if (item.id === id) {
-          if (item.quantity === 1) return null;
-          return { ...item, quantity: item.quantity - 1 };
-        }
-        return item;
-      })
-      .filter(Boolean) as CartItem[];
-    updateCart(updated);
-  };
-  
-  
+  const [search, setSearch] = useState('');
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
     const fetchProducts = async () => {
-      const productsRef = collection(db, 'products');
-      let q;
-
-    if (sort === 'low') q = query(productsRef, orderBy('offer_price'));
-       else if (sort === 'high') q = query(productsRef, orderBy('offer_price', 'desc'));
-       else if (sort === 'latest') q = query(productsRef, orderBy('createdAt', 'desc'));
-       else q = productsRef;
-
-   const snapshot = await getDocs(q);
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
+      const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Product[];
       setProducts(data);
     };
-  
-    const filtered = products.filter(product => {
-      const matchSearch = product.name.toLowerCase().includes(search.toLowerCase());
-      const matchCategory = category ? product.category === category : true;
-      return matchSearch && matchCategory;
-    });
+    fetchProducts();
+  }, []);
 
-return (
+  const filtered = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
     <>
-      <Header />
-      <Carousel />
-      <main className="flex flex-col md:flex-row">
-        <div className="md:w-1/5 p-4 border-r">
-          <CategorySidebar setCategory={setCategory} />
+      {/* Top Features */}
+      <section className="grid grid-cols-2 md:grid-cols-4 text-center py-6 border-b bg-white">
+        <div>
+          <FaCheckCircle size={36} className="text-green-600 mx-auto mb-2" />
+          <p className="font-semibold text-sm md:text-base">100% Genuine Products</p>
+        </div>
+        <div>
+          <FaLeaf size={36} className="text-green-600 mx-auto mb-2" />
+          <p className="font-semibold text-sm md:text-base">Natural Ingredients</p>
+        </div>
+        <div>
+          <FaTruck size={36} className="text-green-600 mx-auto mb-2" />
+          <p className="font-semibold text-sm md:text-base">Fast Delivery</p>
+        </div>
+        <div>
+          <FaUndo size={36} className="text-green-600 mx-auto mb-2" />
+          <p className="font-semibold text-sm md:text-base">Easy Returns</p>
+        </div>
+      </section>
+
+      {/* Sidebar + Main Content */}
+      <main className="flex min-h-screen bg-gray-50">
+        {/* Sidebar (Desktop) */}
+        <aside className="hidden md:block w-64 p-4 bg-white border-r sticky top-0 h-screen overflow-y-auto">
+          <CategorySidebar />
+        </aside>
+
+        {/* Sidebar Toggle (Mobile) */}
+        <div className="md:hidden p-4">
+          <button
+            onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
+            className="px-4 py-2 bg-green-600 text-white rounded"
+          >
+            {isMobileSidebarOpen ? 'Close Categories' : 'Open Categories'}
+          </button>
+          {isMobileSidebarOpen && (
+            <div className="mt-4 bg-white border rounded p-4">
+              <CategorySidebar />
+            </div>
+          )}
         </div>
 
-        <div className="md:w-4/5 p-4">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
-            <input
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="Search products..."
-              className="w-full md:w-1/3 p-2 border rounded text-sm"
+        {/* Main Content */}
+        <section className="flex-1 p-4">
+          {/* Carousel */}
+          <div className="mb-6">
+            <Image
+              src="/banner.jpg" // Replace with your banner image
+              alt="Banner"
+              width={1200}
+              height={300}
+              className="w-full h-60 object-cover rounded-lg"
             />
-            <select
-              value={sort}
-              onChange={e => setSort(e.target.value)}
-              className="p-2 border rounded text-sm"
-            >
-              <option value="">Default</option>
-              <option value="low">Price: Low to High</option>
-              <option value="high">Price: High to Low</option>
-              <option value="latest">Latest</option>
-            </select>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-            {filtered.map(product => {
-              const inCart = cart?.find(item => item.id === product.id);
-
-              return (
-                <div
-                  key={product.id}
-                  className="border rounded-lg shadow-sm p-4 text-center relative group hover:shadow-md"
-                >
-                  <Link href={`/products/${product.id}`}>
-                    <img
-                      src={product.image}
-                      alt={product.name}
-                      className="h-40 w-full object-contain bg-white p-2 rounded mb-2"
-                    />
-                    <h3 className="text-lg font-semibold">{product.name}</h3>
-                    <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
-                    <p className="text-sm text-gray-500 line-through">₹{product.price}</p>
-                  </Link>
-
-                  {inCart ? (
-                    <>
-                      <div className="mt-2 flex justify-center items-center gap-2">
-                        <button
-                          onClick={() => decreaseQty(product.id)}
-                          className="px-3 py-1 bg-gray-200 rounded"
-                        >
-                          -
-                        </button>
-                        <span>{inCart.quantity}</span>
-                        <button
-                          onClick={() => increaseQty(product.id)}
-                          className="px-3 py-1 bg-gray-200 rounded"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <Link
-                        href="/cart"
-                         className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
-                      >
-                        Go to Cart
-                      </Link>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => addToCart(product)}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2"
-                    >
-                      Add to Cart
-                    </button>
-                  )}
-                </div>
-              );
-            })}
+          {/* Search Bar */}
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-2xl font-bold">
+              Latest <span className="text-green-600">Products</span>
+            </h2>
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search products..."
+              className="p-2 border rounded text-sm w-64"
+            />
           </div>
-        </div>
+
+          {/* Product Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+            {filtered.map((product) => (
+              <Link
+                key={product.id}
+                href={`/products/${product.id}`}
+                className="bg-white border rounded p-4 text-center hover:shadow-md transition"
+              >
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="h-32 w-full object-contain mb-2"
+                />
+                <h3 className="font-semibold">{product.name}</h3>
+                <p className="text-green-600 font-bold">₹{product.offer_price}</p>
+                <p className="text-sm text-gray-500 line-through">₹{product.price}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
       </main>
+
       <Footer />
     </>
   );
 }
-
-
-  

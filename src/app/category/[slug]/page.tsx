@@ -65,7 +65,7 @@ const CategoryPage = () => {
 
   return (
     <div>
-      <Header />
+      
       <main className="flex flex-col md:flex-row">
         <div className="md:w-1/5 p-4 border-r">
           <CategorySidebar setCategory={setSearch} />
@@ -93,48 +93,40 @@ const CategoryPage = () => {
 
               return (
                 <div key={product.id} className="border rounded-lg shadow-sm p-4 text-center relative group">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="h-40 w-full object-contain bg-white p-2 rounded mb-2"
-                  />
-                  <h3 className="text-lg font-semibold">{product.name}</h3>
-                  <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
-                  <p className="text-sm text-gray-500 line-through">₹{product.price}</p>
+  <Link href={`/products/${product.id}`}>
+    <div className="cursor-pointer">
+      <img
+        src={product.image}
+        alt={product.name}
+        className="h-40 w-full object-contain bg-white p-2 rounded mb-2"
+      />
+      <h3 className="text-lg font-semibold">{product.name}</h3>
+      <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
+      <p className="text-sm text-gray-500 line-through">₹{product.price}</p>
+    </div>
+  </Link>
 
-                  {inCart ? (
-                    <>
-                      <div className="mt-2 flex justify-center items-center gap-2">
-                        <button
-                          onClick={() => handleDecreaseQty(product)}
-                          className="px-3 py-1 bg-gray-200 rounded"
-                        >
-                          -
-                        </button>
-                        <span>{inCart.quantity}</span>
-                        <button
-                          onClick={() => increaseQty(product.id)}
-                          className="px-3 py-1 bg-gray-200 rounded"
-                        >
-                          +
-                        </button>
-                      </div>
-                      <Link
-                        href="/cart"
-                        className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
-                      >
-                        Go to Cart
-                      </Link>
-                    </>
-                  ) : (
-                    <button
-                      onClick={() => addToCart({ ...product, quantity: 1 })}
-                      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2"
-                    >
-                      Add to Cart
-                    </button>
-                  )}
-                </div>
+  {inCart ? (
+    <>
+      <div className="mt-2 flex justify-center items-center gap-2">
+        <button onClick={() => handleDecreaseQty(product)} className="px-3 py-1 bg-gray-200 rounded">-</button>
+        <span>{inCart.quantity}</span>
+        <button onClick={() => increaseQty(product.id)} className="px-3 py-1 bg-gray-200 rounded">+</button>
+      </div>
+      <Link href="/cart" className="inline-block mt-2 bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200">
+        Go to Cart
+      </Link>
+    </>
+  ) : (
+    <button
+      onClick={() => addToCart({ ...product, quantity: 1 })}
+      className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 mt-2"
+    >
+      Add to Cart
+    </button>
+  )}
+</div>
+
               );
             })}
           </div>

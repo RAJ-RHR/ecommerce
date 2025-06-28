@@ -5,3 +5,20 @@
 body {
   font-family: Arial, sans-serif;
 }
+/* src/app/globals.css */
+body {
+  @apply bg-white text-gray-800;
+}
+@media (max-width: 768px) {
+  .sidebar-mobile {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 50;
+    background: white;
+    width: 250px;
+    padding: 1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+  }
+}

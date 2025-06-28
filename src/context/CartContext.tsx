@@ -25,6 +25,8 @@ type CartContextType = {
   increaseQty: (id: string) => void;
   decreaseQty: (id: string) => void;
   clearCart: () => void;
+  getTotalItems: () => number;
+  getTotalPrice: () => number;
 };
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -37,7 +39,14 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     const stored = localStorage.getItem('cart');
     if (stored) {
-      setCartItems(JSON.parse(stored));
+      try {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed);
+        }
+      } catch (e) {
+        console.error('Failed to parse cart from localStorage:', e);
+      }
     }
   }, [pathname]);
 
@@ -98,6 +107,18 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     setCartItems([]);
   };
 
+  const getTotalItems = () => {
+    return cartItems.reduce((total, item) => total + item.quantity, 0);
+  };
+
+  const getTotalPrice = () => {
+    return cartItems.reduce(
+      (total, item) =>
+        total + item.quantity * parseFloat(item.offer_price || item.price),
+      0
+    );
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -107,6 +128,8 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         increaseQty,
         decreaseQty,
         clearCart,
+        getTotalItems,
+        getTotalPrice,
       }}
     >
       {children}

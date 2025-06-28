@@ -60,7 +60,7 @@ export default function ProductPage() {
 
   return (
     <>
-      <Header />
+     
       <main className="flex flex-col md:flex-row">
         <section className="md:w-4/5 p-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

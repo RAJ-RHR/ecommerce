@@ -90,10 +90,10 @@ export default function ShopPage() {
 
   return (
     <>
-      <Header />
+      
       <main className="flex flex-col md:flex-row">
         <div className="md:w-1/5 p-4 border-r">
-          <CategorySidebar setCategory={setCategory} />
+        
         </div>
 
         <div className="md:w-4/5 p-4">
@@ -174,7 +174,7 @@ export default function ShopPage() {
           </div>
         </div>
       </main>
-      <Footer />
+      
     </>
   );
 }

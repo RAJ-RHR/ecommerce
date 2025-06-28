@@ -1,58 +1,42 @@
 'use client';
 
-import { Dispatch, SetStateAction, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
-const categories = [
-  'Afresh Energy Drink Mix',
-  'Combo Pack',
-  'Digestive Health',
-  'Enhancers',
-  'Formula 1 Nutritional Shake Mix',
-  'Personalized Protein Powder',
-  'Male Enhancement',
-  'Skin Care',
-];
-
-type CategorySidebarProps = {
-  setCategory: Dispatch<SetStateAction<string>>;
+type Props = {
+  onClose?: () => void;
+  setCategory?: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export default function CategorySidebar({ setCategory }: CategorySidebarProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter();
+export default function CategorySidebar({ onClose, setCategory }: Props) {
+  const [categories, setCategories] = useState<string[]>([]);
 
-  const handleClick = (category: string) => {
-    setCategory(category);
-    const slug = encodeURIComponent(category);
-    router.push(`/category/${slug}`);
-  };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const snapshot = await getDocs(collection(db, 'categories'));
+      const catList = snapshot.docs.map(doc => doc.id);
+      setCategories(catList);
+    };
+    fetchCategories();
+  }, []);
 
   return (
-    <div className="w-full md:w-64 bg-white border">
-      {/* Collapse button */}
-      <button
-        className="w-full bg-green-500 text-white px-4 py-3 font-bold flex justify-between items-center"
-        onClick={() => setIsOpen(!isOpen)}
-      >
-        <span className="text-lg">☰ Category</span>
-        <span className="text-xl">{isOpen ? '▲' : '▼'}</span>
-      </button>
-
-      {/* Category list */}
-      {isOpen && (
-        <ul className="border-t divide-y">
-          {categories.map((category) => (
-            <li
-              key={category}
-              onClick={() => handleClick(category)}
-              className="px-4 py-3 hover:bg-green-50 cursor-pointer text-sm md:text-base"
-            >
-              {category}
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="space-y-2">
+      {categories.map((category) => (
+        <Link
+          key={category}
+          href={`/category/${encodeURIComponent(category)}`}
+          onClick={() => {
+            if (setCategory) setCategory(category);
+            if (onClose) onClose();
+          }}
+          className="block p-2 text-sm rounded hover:bg-green-100"
+        >
+          {category}
+        </Link>
+      ))}
     </div>
   );
 }
