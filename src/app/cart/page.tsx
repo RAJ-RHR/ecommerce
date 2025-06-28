@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
+import Link from 'next/link';
 import Footer from '@/components/Footer';
 
 type CartItem = {
@@ -108,9 +109,12 @@ const clearCart = () => {
             >
               Clear Cart
             </button>
-            <button className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
-              Proceed to Checkout
-            </button>
+           
+<Link href="/checkout">
+  <button className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+    Proceed to Checkout
+  </button>
+</Link>
           </div>
         </div>
       )}

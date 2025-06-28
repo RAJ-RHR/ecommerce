@@ -1,11 +1,11 @@
 {
   "/_not-found/page": "/_not-found",
   "/cart/page": "/cart",
+  "/products/[id]/page": "/products/[id]",
+  "/page": "/",
+  "/shop/page": "/shop",
   "/admin/product/page": "/admin/product",
   "/category/[slug]/page": "/category/[slug]",
-  "/contact/page": "/contact",
-  "/products/[id]/page": "/products/[id]",
   "/checkout/page": "/checkout",
-  "/page": "/",
-  "/shop/page": "/shop"
+  "/contact/page": "/contact"
 }

@@ -1,124 +1,177 @@
 'use client';
 
+import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
 
-export default function CartPage() {
-  const { cartItems, removeFromCart, updateQuantity } = useCart();
+export default function CheckoutPage() {
+  const { cartItems, clearCart } = useCart();
+  const [form, setForm] = useState({
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    paymentMethod: 'Paytm',
+  });
+  const [submitted, setSubmitted] = useState(false);
 
-  // Total amount
-  const total = cartItems.reduce(
-    (sum, item) => sum + Number(item.offer_price) * Number(item.quantity),
-    0
-  );
+  const total = cartItems.reduce((sum, item) => sum + item.offer_price * item.quantity, 0);
 
-  // Total savings
+  // ✅ Calculate total savings
   const totalSavings = cartItems.reduce(
-    (sum, item) =>
-      sum +
-      (Number(item.price) - Number(item.offer_price)) * Number(item.quantity),
+    (sum, item) => sum + (item.price - item.offer_price) * item.quantity,
     0
   );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitted(true);
+    clearCart();
+  };
+
+  if (submitted) {
+    return (
+      <div className="max-w-2xl mx-auto p-6 text-center">
+        <h2 className="text-2xl font-bold mb-4">✅ Order Placed Successfully!</h2>
+        <p className="mb-6">Payment Method: <strong>{form.paymentMethod}</strong></p>
+        <p>Thank you for your order, {form.name}.</p>
+        <Link href="/" className="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded">Back to Home</Link>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-8">
-      <h2 className="text-2xl font-bold mb-6">🛒 Your Cart</h2>
+    <div className="mt-20">
+      <div className="max-w-6xl mx-auto p-6">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-xl font-semibold">🛒 Checkout</h2>
+        </div>
 
-      {cartItems.length === 0 ? (
-        <p className="text-gray-600">
-          Your cart is empty.{' '}
-          <Link href="/shop" className="text-green-600 underline">
-            Go shopping
-          </Link>
-        </p>
-      ) : (
-        <>
-          {/* Cart Items */}
-          <div className="space-y-6">
-            {cartItems.map((item) => (
-              <div
-                key={item.id}
-                className="flex flex-col md:flex-row items-center border-b pb-4"
-              >
-                <Image
-                  src={item.image}
-                  alt={item.name}
-                  width={100}
-                  height={100}
-                  className="object-contain rounded bg-white"
-                />
-
-                <div className="flex-1 ml-4 w-full">
-                  <h3 className="text-lg font-semibold">{item.name}</h3>
-                  <p className="text-sm text-gray-500">{item.category}</p>
-                  <p className="text-sm">
-                    Price: <span className="line-through">₹{item.price}</span>{' '}
-                    <span className="text-green-600 font-bold">
-                      ₹{item.offer_price}
-                    </span>
-                  </p>
-
-                  {/* Quantity Control */}
-                  <div className="mt-2 flex items-center space-x-2">
-                    <button
-                      onClick={() =>
-                        updateQuantity(item.id, Number(item.quantity) - 1)
-                      }
-                      className="px-2 py-1 bg-gray-200 rounded"
-                      disabled={item.quantity <= 1}
-                    >
-                      -
-                    </button>
-                    <span>{item.quantity}</span>
-                    <button
-                      onClick={() =>
-                        updateQuantity(item.id, Number(item.quantity) + 1)
-                      }
-                      className="px-2 py-1 bg-gray-200 rounded"
-                    >
-                      +
-                    </button>
-                  </div>
-
-                  {/* Item Total */}
-                  <p className="mt-1 text-sm text-gray-700 font-medium">
-                    Total: ₹
-                    {Number(item.offer_price) * Number(item.quantity)}
-                  </p>
-
-                  <button
-                    onClick={() => removeFromCart(item.id)}
-                    className="mt-2 text-sm text-red-600 hover:underline"
-                  >
-                    Remove
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Summary */}
-          <div className="mt-8 border-t pt-4 text-right space-y-2">
-            <p className="text-lg">
-              <span className="font-medium">Total:</span>{' '}
-              <span className="font-bold text-green-600 text-xl">
-                ₹{total.toFixed(2)}
-              </span>
-            </p>
-            <p className="text-sm text-gray-500">
-              You saved ₹{totalSavings.toFixed(2)} on this order 🎉
-            </p>
-
-            <Link
-              href="/checkout"
-              className="inline-block mt-4 bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-            >
-              Proceed to Checkout
+        {cartItems.length === 0 ? (
+          <div className="text-center py-10">
+            <h3 className="text-xl font-semibold mb-4">Your cart is empty.</h3>
+            <Link href="/shop" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+              🛍️ Shop Now
             </Link>
           </div>
-        </>
-      )}
+        ) : (
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Cart Details */}
+            <div className="bg-white shadow rounded-lg p-4">
+              <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
+             <ul className="space-y-4">
+  {cartItems.map((item) => (
+    <li key={item.id} className="flex gap-4 items-center border-b pb-4">
+      <Image
+        src={item.image}
+        alt={item.name}
+        width={64}
+        height={64}
+        className="w-16 h-16 object-contain bg-white border rounded"
+      />
+      <div className="flex-1">
+        <p className="font-medium">{item.name}</p>
+        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+        <p className="text-sm text-gray-500">
+          Price: <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
+          <span className="text-green-700 font-semibold">₹{item.offer_price}</span>
+        </p>
+      </div>
+      <div className="text-right font-semibold text-green-700">
+        ₹{item.offer_price * item.quantity}
+      </div>
+    </li>
+  ))}
+  <li className="flex justify-between pt-4 text-lg font-bold border-t">
+    <span>Total:</span>
+    <span>₹{total}</span>
+  </li>
+
+  {/* ✅ Updated to green */}
+  {totalSavings > 0 && (
+    <li className="flex justify-between text-sm text-green-600 font-medium">
+      <span> You saved ₹{totalSavings.toFixed(2)} on this order 🎉</span>
+      <span>₹{totalSavings}</span>
+    </li>
+  )}
+</ul>
+
+            </div>
+
+            {/* User Form */}
+            <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-4 space-y-4">
+              <h3 className="text-xl font-semibold mb-4">Delivery Information</h3>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="Full Name"
+                required
+                className="w-full p-2 border rounded"
+              />
+              <textarea
+                name="address"
+                value={form.address}
+                onChange={handleChange}
+                placeholder="Shipping Address"
+                required
+                className="w-full p-2 border rounded"
+              />
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                placeholder="Phone Number"
+                required
+                className="w-full p-2 border rounded"
+              />
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="Email Address"
+                type="email"
+                required
+                className="w-full p-2 border rounded"
+              />
+
+              {/* ✅ Payment Method Section */}
+              <div>
+                <h4 className="font-semibold mt-4 mb-2">Payment Method</h4>
+                <div className="space-y-2">
+                  {['Paytm', 'Pay Online', 'Cash On Delivery', 'Bank Transfer'].map((method) => (
+                    <label className="block" key={method}>
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value={method}
+                        checked={form.paymentMethod === method}
+                        onChange={handleChange}
+                        className="mr-2"
+                      />
+                      {method === 'Paytm'
+                        ? 'Credit Card / Debit Card (Paytm PG)'
+                        : method}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 mt-4"
+              >
+                Place Order
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
