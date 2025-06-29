@@ -32,10 +32,15 @@ export default function HomePage() {
     const fetchProducts = async () => {
       const q = query(collection(db, 'products'), orderBy('createdAt', 'desc'));
       const snapshot = await getDocs(q);
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Product[];
+      const data = snapshot.docs.map((doc) => {
+        const raw = doc.data();
+        return {
+          id: doc.id,
+          ...raw,
+          price: Number(raw.price),
+          offer_price: Number(raw.offer_price),
+        };
+      }) as Product[];
       setProducts(data);
     };
     fetchProducts();
@@ -83,7 +88,7 @@ export default function HomePage() {
         className="relative bg-white rounded-2xl shadow p-4 hover:shadow-xl transition duration-300"
       >
         {product.label && (
-          <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
+          <span className={`absolute top-2 left-2 z-20 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
             {product.label}
           </span>
         )}
@@ -97,8 +102,8 @@ export default function HomePage() {
           </div>
           <h3 className="font-semibold text-base text-center mb-1">{product.name}</h3>
           <div className="text-center flex justify-center items-center gap-2">
-            <p className="text-gray-500 line-through text-sm">₹{product.price}</p>
-            <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
+            <p className="text-gray-500 line-through text-sm">₹{product.price.toFixed(2)}</p>
+            <p className="text-green-600 font-bold text-lg">₹{product.offer_price.toFixed(2)}</p>
           </div>
         </Link>
 
@@ -195,7 +200,7 @@ export default function HomePage() {
       {/* Shop by Category */}
       <section className="px-4 md:px-8 mb-6">
         <h2 className="text-2xl font-bold mb-4">
-          Shop by <span className="text-green-600">Category</span>
+          SHOP BY <span className="text-green-600">CATEGORY</span>
         </h2>
         <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar px-1">
           {randomCategoryProducts.map(({ category, product }) => (
@@ -221,7 +226,7 @@ export default function HomePage() {
       {/* Latest Products */}
       <section className="bg-gray-50 px-4 md:px-8 py-6 mt-0">
         <h2 className="text-2xl font-bold mb-6">
-          Latest <span className="text-green-600">Products</span>
+          LATEST <span className="text-green-600">PRODUCTS</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {products.map(renderProductCard)}

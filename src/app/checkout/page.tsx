@@ -25,7 +25,9 @@ export default function CheckoutPage() {
     0
   );
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
@@ -69,8 +71,10 @@ export default function CheckoutPage() {
         {cartItems.length === 0 ? (
           <div className="text-center py-10">
             <h3 className="text-xl font-semibold mb-4">Your cart is empty.</h3>
-            <Link href="/shop" className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-              🛍️ Shop Now
+            <Link href="/shop">
+              <button className="border border-green-600 text-green-600 px-6 py-2 rounded-full hover:bg-green-50 transition font-semibold">
+                🛍️ Shop Now
+              </button>
             </Link>
           </div>
         ) : (
@@ -92,29 +96,28 @@ export default function CheckoutPage() {
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                       <p className="text-sm text-gray-500">
-                        <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
-                        <span className="text-green-700 font-semibold">₹{item.offer_price}</span>
+                        <span className="line-through text-gray-400 mr-1">₹{item.price.toFixed(2)}</span>
+                        <span className="text-green-700 font-semibold">₹{item.offer_price.toFixed(2)}</span>
                       </p>
                     </div>
                     <div className="text-right font-semibold text-green-700">
-                      ₹{item.offer_price * item.quantity}
+                      ₹{(item.offer_price * item.quantity).toFixed(2)}
                     </div>
                   </li>
                 ))}
                 <li className="flex justify-between pt-4 text-lg font-bold border-t">
                   <span>Total:</span>
-                  <span>₹{total}</span>
+                  <span>₹{total.toFixed(2)}</span>
                 </li>
                 {totalSavings > 0 && (
                   <li className="flex justify-between text-sm text-green-600 font-medium">
                     <span>You saved ₹{totalSavings.toFixed(2)} on this order 🎉</span>
-                    <span>₹{totalSavings}</span>
                   </li>
                 )}
               </ul>
             </div>
 
-            {/* Form */}
+            {/* Delivery Form */}
             <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-4 space-y-4">
               <h3 className="text-xl font-semibold mb-4">Delivery Information</h3>
 
@@ -140,6 +143,7 @@ export default function CheckoutPage() {
                 onChange={handleChange}
                 placeholder="Phone Number"
                 pattern="[6-9][0-9]{9}"
+                maxLength={10}
                 required
                 className="w-full p-2 border rounded"
               />
@@ -159,8 +163,10 @@ export default function CheckoutPage() {
                   {['Paytm', 'Pay Online', 'Cash On Delivery', 'Bank Transfer'].map((method) => (
                     <label
                       key={method}
-                      className={`block p-2 border rounded ${
-                        method !== 'Cash On Delivery' ? 'opacity-50 cursor-not-allowed' : ''
+                      className={`block p-2 border rounded transition ${
+                        method !== 'Cash On Delivery'
+                          ? 'opacity-50 cursor-not-allowed'
+                          : 'border-green-600 text-green-700 font-semibold'
                       }`}
                     >
                       <input
@@ -180,9 +186,9 @@ export default function CheckoutPage() {
 
               <button
                 type="submit"
-                className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 mt-4"
+                className="w-full border border-red-600 text-red-600 py-2 rounded-full hover:bg-red-50 transition font-semibold"
               >
-                Place Order
+                Order
               </button>
             </form>
           </div>

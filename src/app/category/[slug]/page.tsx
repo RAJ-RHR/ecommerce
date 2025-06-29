@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { useParams } from 'next/navigation';
-
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import type { Product } from '@/context/CartContext';
@@ -30,6 +29,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     if (!decodedSlug) return;
+
     const fetchCategoryData = async () => {
       const q = query(collection(db, 'products'), where('category', '==', decodedSlug));
       const snapshot = await getDocs(q);
@@ -89,6 +89,13 @@ const CategoryPage = () => {
     }
   };
 
+  const getLabelColor = (label: string | undefined) => {
+    if (label === 'Hot Deal') return 'bg-red-600';
+    if (label === 'Sale') return 'bg-green-600';
+    if (label === 'Limited Offer') return 'bg-orange-500';
+    return 'bg-gray-500';
+  };
+
   return (
     <div className="mt-20">
       <main className="p-4">
@@ -109,7 +116,20 @@ const CategoryPage = () => {
             const inCart = cartItems.find((item) => item.id === product.id);
 
             return (
-              <div key={product.id} className="border rounded-lg shadow-sm p-4 text-center relative group hover:shadow-md">
+              <div
+                key={product.id}
+                className="border rounded-lg shadow-sm p-4 text-center relative group hover:shadow-md"
+              >
+                {product.label && (
+                  <span
+                    className={`absolute top-2 left-2 z-20 text-xs text-white px-2 py-1 rounded ${getLabelColor(
+                      product.label
+                    )}`}
+                  >
+                    {product.label}
+                  </span>
+                )}
+
                 <Link href={`/products/${product.id}`}>
                   <div className="cursor-pointer">
                     <img
@@ -119,8 +139,12 @@ const CategoryPage = () => {
                     />
                     <h3 className="text-base font-semibold mb-1">{product.name}</h3>
                     <div className="flex justify-center items-center gap-2">
-                      <p className="text-sm line-through text-gray-400">₹{product.price}</p>
-                      <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
+                      <p className="text-sm line-through text-gray-400">
+                        ₹{product.price.toFixed(2)}
+                      </p>
+                      <p className="text-green-600 font-bold text-lg">
+                        ₹{product.offer_price.toFixed(2)}
+                      </p>
                     </div>
                   </div>
                 </Link>
@@ -163,6 +187,7 @@ const CategoryPage = () => {
         </div>
       </main>
 
+      {/* Shop by Category Section */}
       {Object.keys(allCategories).length > 0 && (
         <section className="px-4 md:px-8 mt-8">
           <h2 className="text-2xl font-bold mb-4">
