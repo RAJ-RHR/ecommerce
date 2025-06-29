@@ -119,7 +119,7 @@ const clearCart = () => {
         </div>
       )}
 
-      <Footer />
+  
     </>
   );
 }

@@ -1,5 +1,5 @@
-import './globals.css';
-import ClientWrapper from './ClientWrapper'; // Import from src/app
+import '@/app/globals.css';
+import ClientWrapper from './ClientWrapper';
 
 export const metadata = {
   title: 'Your Herbal Store',

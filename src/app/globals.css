@@ -4,11 +4,11 @@
 
 body {
   font-family: Arial, sans-serif;
+  background-color: white;
+  color: #1f2937; /* text-gray-800 */
 }
-/* src/app/globals.css */
-body {
-  @apply bg-white text-gray-800;
-}
+
+/* Sidebar mobile style */
 @media (max-width: 768px) {
   .sidebar-mobile {
     position: fixed;
@@ -21,4 +21,13 @@ body {
     padding: 1rem;
     box-shadow: 0 0 10px rgba(0,0,0,0.2);
   }
+}
+
+/* Hide scrollbar cross-browser */
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

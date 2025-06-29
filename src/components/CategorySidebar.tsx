@@ -30,7 +30,7 @@ export default function CategorySidebar({ setCategory }: Props) {
   }, []);
 
   return (
-    <div className="fixed left-0 top-24 z-10">
+    <div className="fixed left-0 top-24 z-20">
       {/* Toggle Button */}
       <div
         className="bg-green-600 text-white px-4 py-2 rounded-r-md shadow cursor-pointer flex items-center gap-2"

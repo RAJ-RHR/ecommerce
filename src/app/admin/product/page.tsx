@@ -170,6 +170,7 @@ export default function AddProductPage() {
   const paginated = filteredProducts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   return (
+     <div className="mt-24">
     <div className="max-w-5xl mx-auto p-4">
       <h2 className="text-2xl font-bold mb-4">
         {editingId ? '✏️ Edit Product' : '➕ Add Product'}
@@ -268,6 +269,7 @@ export default function AddProductPage() {
           </div>
         ))}
       </div>
+    </div>
     </div>
   );
 }

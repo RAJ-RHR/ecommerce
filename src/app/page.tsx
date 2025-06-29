@@ -7,7 +7,6 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { FaCheckCircle, FaLeaf, FaTruck, FaUndo } from 'react-icons/fa';
 import { useCart } from '@/context/CartContext';
-import Footer from '@/components/Footer';
 
 type Product = {
   id: string;
@@ -22,6 +21,7 @@ type Product = {
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [randomCategoryProducts, setRandomCategoryProducts] = useState<{ category: string; product: Product }[]>([]);
   const [currentBanner, setCurrentBanner] = useState(0);
   const { cartItems, addToCart, increaseQty, decreaseQty } = useCart();
 
@@ -47,6 +47,23 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (products.length === 0) return;
+
+    const categoryMap: Record<string, Product[]> = {};
+    products.forEach((p) => {
+      if (!categoryMap[p.category]) categoryMap[p.category] = [];
+      categoryMap[p.category].push(p);
+    });
+
+    const selections = Object.entries(categoryMap).map(([category, items]) => ({
+      category,
+      product: items[Math.floor(Math.random() * items.length)],
+    }));
+
+    setRandomCategoryProducts(selections);
+  }, [products]);
+
   const getLabelColor = (label: string | undefined) => {
     if (label === 'Hot Deal') return 'bg-red-600';
     if (label === 'Sale') return 'bg-green-600';
@@ -58,35 +75,51 @@ export default function HomePage() {
     const inCart = cartItems.find((item) => item.id === product.id);
 
     return (
-      <div key={product.id} className="relative bg-white rounded-2xl shadow p-4 hover:shadow-lg transition">
+      <div
+        key={product.id}
+        className="relative bg-white rounded-2xl shadow p-4 hover:shadow-xl transition duration-300"
+      >
         {product.label && (
           <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
             {product.label}
           </span>
         )}
         <Link href={`/products/${product.id}`}>
-          <div className="overflow-hidden rounded-xl mb-2">
+          <div className="overflow-hidden rounded-xl mb-2 transition-transform duration-300 hover:scale-105">
             <img
               src={product.image}
               alt={product.name}
-              className="h-40 w-full object-contain transition-transform duration-300 hover:scale-105"
+              className="h-40 w-full object-contain"
             />
           </div>
-          <h3 className="font-semibold text-sm">{product.name}</h3>
-          <p className="text-green-600 font-bold text-sm">₹{product.offer_price}</p>
-          <p className="text-gray-500 line-through text-xs">₹{product.price}</p>
+          <h3 className="font-semibold text-base text-center mb-1">{product.name}</h3>
+          <div className="text-center flex justify-center items-center gap-2">
+            <p className="text-gray-500 line-through text-sm">₹{product.price}</p>
+            <p className="text-green-600 font-bold text-lg">₹{product.offer_price}</p>
+          </div>
         </Link>
-        <div className="mt-2">
+
+        <div className="mt-3">
           {inCart ? (
             <>
               <div className="flex justify-center items-center gap-2">
-                <button onClick={() => decreaseQty(product.id)} className="bg-gray-200 px-2 rounded">-</button>
+                <button
+                  onClick={() => decreaseQty(product.id)}
+                  className="border border-gray-400 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100 transition"
+                >
+                  −
+                </button>
                 <span>{inCart.quantity}</span>
-                <button onClick={() => increaseQty(product.id)} className="bg-gray-200 px-2 rounded">+</button>
+                <button
+                  onClick={() => increaseQty(product.id)}
+                  className="border border-gray-400 text-gray-700 px-3 py-1 rounded-full hover:bg-gray-100 transition"
+                >
+                  +
+                </button>
               </div>
               <Link
                 href="/cart"
-                className="block mt-2 text-sm text-center bg-blue-100 text-blue-700 px-3 py-1 rounded hover:bg-blue-200"
+                className="block mt-2 text-sm text-center border border-blue-600 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 transition max-w-[80%] mx-auto"
               >
                 View Cart
               </Link>
@@ -94,7 +127,7 @@ export default function HomePage() {
           ) : (
             <button
               onClick={() => addToCart(product)}
-              className="bg-green-600 text-white px-3 py-1 rounded mt-2 text-sm hover:bg-green-700"
+              className="border border-green-600 text-green-600 px-3 py-1 rounded-full mt-2 text-sm hover:bg-green-50 transition max-w-[80%] mx-auto block"
             >
               Add to Cart
             </button>
@@ -106,7 +139,7 @@ export default function HomePage() {
 
   return (
     <>
-      {/* Banner Carousel */}
+      {/* Banner Section */}
       <div className="px-4 md:px-8 mt-4 mb-6 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
         {banners.map((src, index) => (
           <Image
@@ -122,7 +155,7 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* Features */}
+      {/* Features Section */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-y-6 px-4 md:px-16 text-center py-6 border-b bg-white">
         <div>
           <FaCheckCircle size={36} className="text-green-600 mx-auto mb-2" />
@@ -142,17 +175,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Product Grid */}
-      <main className="bg-gray-50 px-4 md:px-8 py-6">
+      {/* Shop by Category */}
+      <section className="px-4 md:px-8 mt-8">
+        <h2 className="text-2xl font-bold mb-4">
+          Shop by <span className="text-green-600">Category</span>
+        </h2>
+        <div className="flex overflow-x-auto gap-4 hide-scrollbar">
+          {randomCategoryProducts.map(({ category, product }) => (
+            <div
+              key={category}
+              className="min-w-[45%] sm:min-w-[22%] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+            >
+              <Link href={`/category/${category}`}>
+                <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-32 object-contain"
+                  />
+                </div>
+                <h3 className="font-semibold text-sm text-center">{category}</h3>
+              </Link>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Latest Products */}
+      <section className="bg-gray-50 px-4 md:px-8 py-6">
         <h2 className="text-2xl font-bold mb-6">
           Latest <span className="text-green-600">Products</span>
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {products.map(renderProductCard)}
         </div>
-      </main>
-
-      <Footer />
+      </section>
     </>
   );
 }

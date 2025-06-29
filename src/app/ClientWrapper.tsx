@@ -2,14 +2,22 @@
 
 import { CartProvider } from '@/context/CartContext';
 import Header from '@/components/Header';
-import CategorySidebar from '@/components/CategorySidebar'; // Adjust path if needed
+import Footer from '@/components/Footer';
+import CategorySidebar from '@/components/CategorySidebar';
 
 export default function ClientWrapper({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
       <Header />
-      {children}
-      <CategorySidebar /> {/* Sticky badge shown on all pages */}
+
+      {/* Main content area with reduced side margins */}
+      <main className="mx-auto max-w-screen-xl px-2 sm:px-3 md:px-4">
+        {children}
+      </main>
+
+      <Footer />
+
+      <CategorySidebar />
     </CartProvider>
   );
 }
