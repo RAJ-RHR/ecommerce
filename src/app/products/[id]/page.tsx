@@ -7,6 +7,8 @@ import { useParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import Footer from '@/components/Footer';
 import Link from 'next/link';
+import Head from 'next/head';
+import Script from 'next/script';
 import type { Product } from '@/context/CartContext';
 
 export default function ProductPage() {
@@ -43,8 +45,8 @@ export default function ProductPage() {
       const q = query(collection(db, 'products'), where('category', '==', category), limit(4));
       const snapshot = await getDocs(q);
       const relatedProducts = snapshot.docs
-        .filter(doc => doc.id !== excludeId)
-        .map(doc => ({ id: doc.id, ...doc.data() })) as Product[];
+        .filter((doc) => doc.id !== excludeId)
+        .map((doc) => ({ id: doc.id, ...doc.data() })) as Product[];
       setRelated(relatedProducts);
     };
 
@@ -70,15 +72,69 @@ export default function ProductPage() {
     return 'bg-gray-500';
   };
 
+  const canonicalUrl = `https://store.herbolife.in/products/${product.id}`;
+  const title = `${product.name} | Herbolife`;
+  const description = product.description || 'Premium herbal product by Herbolife.';
+
   return (
     <>
+      <Head>
+        <title>{title}</title>
+        <meta name="description" content={description} />
+        <meta name="keywords" content={`${product.name}, Herbolife, herbal, wellness`} />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href={canonicalUrl} />
+
+        {/* Open Graph */}
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:image" content={product.image} />
+        <meta property="og:type" content="product" />
+        <meta property="og:url" content={canonicalUrl} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={title} />
+        <meta name="twitter:description" content={description} />
+        <meta name="twitter:image" content={product.image} />
+      </Head>
+
+      {/* Structured Schema */}
+      <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
+        {JSON.stringify({
+          '@context': 'https://schema.org/',
+          '@type': 'Product',
+          name: product.name,
+          image: [product.image],
+          description: description,
+          sku: product.id,
+          brand: {
+            '@type': 'Brand',
+            name: 'Herbolife',
+          },
+          offers: {
+            '@type': 'Offer',
+            url: canonicalUrl,
+            priceCurrency: 'INR',
+            price: product.offer_price,
+            itemCondition: 'https://schema.org/NewCondition',
+            availability: 'https://schema.org/InStock',
+          },
+        })}
+      </Script>
+
+      {/* Main Product UI */}
       <div className="mt-20">
         <main className="flex flex-col md:flex-row">
           <section className="md:w-4/5 p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="relative group overflow-hidden shadow hover:shadow-xl transition-shadow duration-300 bg-white p-4 rounded">
                 {product.label && (
-                  <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
+                  <span
+                    className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(
+                      product.label
+                    )}`}
+                  >
                     {product.label}
                   </span>
                 )}
@@ -145,6 +201,7 @@ export default function ProductPage() {
         </main>
       </div>
 
+      {/* Related Products */}
       {related.length > 0 && (
         <section className="p-6">
           <h2 className="text-xl font-bold mb-4">Related Products</h2>
@@ -176,7 +233,7 @@ export default function ProductPage() {
         </section>
       )}
 
-      
+      <Footer />
     </>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Head from 'next/head';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import Link from 'next/link';
@@ -56,10 +57,12 @@ export default function HomePage() {
       categoryMap[p.category].push(p);
     });
 
-    const selections = Object.entries(categoryMap).map(([category, items]) => ({
-      category,
-      product: items[Math.floor(Math.random() * items.length)],
-    }));
+    const selections = Object.entries(categoryMap)
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([category, items]) => ({
+        category,
+        product: items[Math.floor(Math.random() * items.length)],
+      }));
 
     setRandomCategoryProducts(selections);
   }, [products]);
@@ -139,8 +142,22 @@ export default function HomePage() {
 
   return (
     <>
+      <Head>
+        <title>Herbolife | Herbal Health & Wellness Store</title>
+        <meta name="description" content="Shop authentic herbal health and wellness products online. Natural, fast delivery, easy returns - Herbolife." />
+        <meta name="keywords" content="Herbolife, herbal, wellness, organic, health, ayurveda, supplements, immunity" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://store.herbolife.in/" />
+        <meta property="og:title" content="Herbolife | Herbal Health & Wellness Store" />
+        <meta property="og:description" content="Natural health and wellness products delivered fast. 100% genuine and ayurvedic. Start your wellness journey with Herbolife." />
+        <meta property="og:image" content="https://store.herbolife.in/images/banner1.jpg" />
+        <meta property="og:url" content="https://store.herbolife.in/" />
+        <meta property="og:type" content="website" />
+        <meta name="twitter:card" content="summary_large_image" />
+      </Head>
+
       {/* Banner Section */}
-      <div className="px-4 md:px-8 mt-4 mb-6 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
+      <div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
         {banners.map((src, index) => (
           <Image
             key={index}
@@ -156,7 +173,7 @@ export default function HomePage() {
       </div>
 
       {/* Features Section */}
-      <section className="grid grid-cols-2 md:grid-cols-4 gap-y-6 px-4 md:px-16 text-center py-6 border-b bg-white">
+      <section className="grid grid-cols-2 md:grid-cols-4 gap-y-6 px-4 md:px-16 text-center py-6 border-b bg-white my-12">
         <div>
           <FaCheckCircle size={36} className="text-green-600 mx-auto mb-2" />
           <p className="font-semibold text-sm md:text-base">100% Genuine Products</p>
@@ -176,15 +193,15 @@ export default function HomePage() {
       </section>
 
       {/* Shop by Category */}
-      <section className="px-4 md:px-8 mt-8">
+      <section className="px-4 md:px-8 mb-6">
         <h2 className="text-2xl font-bold mb-4">
           Shop by <span className="text-green-600">Category</span>
         </h2>
-        <div className="flex overflow-x-auto gap-4 hide-scrollbar">
+        <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar px-1">
           {randomCategoryProducts.map(({ category, product }) => (
             <div
               key={category}
-              className="min-w-[45%] sm:min-w-[22%] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+              className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
             >
               <Link href={`/category/${category}`}>
                 <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
@@ -202,7 +219,7 @@ export default function HomePage() {
       </section>
 
       {/* Latest Products */}
-      <section className="bg-gray-50 px-4 md:px-8 py-6">
+      <section className="bg-gray-50 px-4 md:px-8 py-6 mt-0">
         <h2 className="text-2xl font-bold mb-6">
           Latest <span className="text-green-600">Products</span>
         </h2>

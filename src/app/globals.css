@@ -1,33 +1,36 @@
+/* Tailwind Directives */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Global Styles */
 body {
   font-family: Arial, sans-serif;
   background-color: white;
-  color: #1f2937; /* text-gray-800 */
+  color: #1f2937; /* Tailwind's text-gray-800 */
 }
 
-/* Sidebar mobile style */
+/* Sidebar Mobile Style */
 @media (max-width: 768px) {
   .sidebar-mobile {
     position: fixed;
-    left: 0;
     top: 0;
+    left: 0;
     bottom: 0;
     z-index: 50;
-    background: white;
+    background-color: #ffffff;
     width: 250px;
     padding: 1rem;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
 }
 
 /* Hide scrollbar cross-browser */
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
 .hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  -ms-overflow-style: none;            /* IE and Edge */
+  scrollbar-width: none;               /* Firefox */
+  -webkit-overflow-scrolling: touch;   /* Smooth scroll on iOS */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;                       /* Chrome, Safari, Opera */
 }

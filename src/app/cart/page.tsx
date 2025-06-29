@@ -56,7 +56,7 @@ const clearCart = () => {
 
   return (
     <>
-      
+       <div className="mt-20"></div>
 
       {cart.length === 0 ? (
         <div className="p-8 text-center text-lg font-semibold">
@@ -117,9 +117,8 @@ const clearCart = () => {
 </Link>
           </div>
         </div>
+      
       )}
-
-  
     </>
   );
 }

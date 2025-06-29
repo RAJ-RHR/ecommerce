@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api
+
+# Host
+Host: https://store.herbolife.in
+
+# Sitemaps
+Sitemap: https://store.herbolife.in/sitemap.xml
