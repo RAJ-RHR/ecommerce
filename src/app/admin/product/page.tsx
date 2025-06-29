@@ -12,8 +12,12 @@ import {
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function AddProductPage() {
+  const router = useRouter();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -52,7 +56,32 @@ export default function AddProductPage() {
   const LABEL_OPTIONS = ['Hot Deal', 'Sale', 'Limited Offer'];
 
   useEffect(() => {
-    fetchProducts();
+    const isAdmin = localStorage.getItem('admin');
+    if (isAdmin === 'true') {
+      setIsAuthorized(true);
+      fetchProducts();
+
+      let timeout: NodeJS.Timeout;
+      const resetTimer = () => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+          localStorage.removeItem('admin');
+          alert('Session expired due to inactivity.');
+          router.push('/admin/login');
+        }, 5 * 60 * 1000);
+      };
+
+      const events = ['mousemove', 'keydown', 'click', 'scroll'];
+      events.forEach((event) => document.addEventListener(event, resetTimer));
+      resetTimer();
+
+      return () => {
+        clearTimeout(timeout);
+        events.forEach((event) => document.removeEventListener(event, resetTimer));
+      };
+    } else {
+      router.push('/admin/login');
+    }
   }, []);
 
   const fetchProducts = async () => {
@@ -169,107 +198,101 @@ export default function AddProductPage() {
   const totalPages = Math.ceil(filteredProducts.length / perPage);
   const paginated = filteredProducts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
+  if (!isAuthorized) return null;
+
   return (
-     <div className="mt-24">
-    <div className="max-w-5xl mx-auto p-4">
-      <h2 className="text-2xl font-bold mb-4">
-        {editingId ? '✏️ Edit Product' : '➕ Add Product'}
-      </h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Product Name" className="border w-full p-2 rounded" required />
-        <input type="text" name="price" value={form.price} onChange={handleChange} placeholder="Price" className="border w-full p-2 rounded" required />
-        <input type="text" name="offer_price" value={form.offer_price} onChange={handleChange} placeholder="Offer Price" className="border w-full p-2 rounded" required />
-        
-        <select name="category" value={form.category} onChange={handleChange} className="border w-full p-2 rounded" required>
-          <option value="">Select Category</option>
-          {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
-        </select>
-
-        <select name="label" value={form.label} onChange={handleChange} className="border w-full p-2 rounded">
-          <option value="">Select Label</option>
-          {LABEL_OPTIONS.map((label) => (
-            <option key={label} value={label}>{label}</option>
-          ))}
-        </select>
-
-        <textarea
-          name="description"
-          value={form.description}
-          onChange={handleChange}
-          placeholder="Product Description"
-          className="border w-full p-2 rounded"
-          rows={4}
-        />
-
-        <input type="file" name="image" onChange={handleChange} accept="image/*" className="border w-full p-2 rounded" {...(editingId ? {} : { required: true })} />
-
-        {preview && <img src={preview} alt="Preview" className="w-full h-60 object-contain bg-white rounded" />}
-
-        <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
-          {loading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Product' : 'Upload Product')}
-        </button>
-      </form>
-
-      {showPopup && (
-        <div className="fixed top-5 left-1/2 transform -translate-x-1/2 bg-white shadow-xl px-6 py-3 border rounded text-green-700 font-semibold z-50">
-          ✅ Product {editingId ? 'updated' : 'added'} successfully!
-        </div>
-      )}
-
-      {/* Search + Category Filter */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mt-10">
-        <input
-          type="text"
-          placeholder="Search by product name..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="border p-2 rounded w-full md:max-w-sm"
-        />
-
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="border p-2 rounded w-full md:w-auto"
-        >
-          <option value="">All Categories</option>
-          {CATEGORY_OPTIONS.map((cat) => (
-            <option key={cat}>{cat}</option>
-          ))}
-        </select>
-      </div>
-
-      {/* Pagination */}
-      <div className="flex justify-center items-center gap-4 mt-6">
-        <button onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))} disabled={currentPage === 1} className="bg-gray-200 px-3 py-1 rounded">Prev</button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="bg-gray-200 px-3 py-1 rounded">Next</button>
-      </div>
-
-      {/* Product List */}
-      <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {paginated.map((product) => (
-          <div key={product.id} className="border rounded p-4 flex flex-col">
-            <img src={product.image} alt={product.name} className="h-40 object-contain bg-white rounded mb-2" />
-            <h4 className="font-bold">{product.name}</h4>
-            <p>Category: {product.category}</p>
-            <p>Price: ₹{product.price}</p>
-            <p>Offer: ₹{product.offer_price}</p>
-            <p className="text-sm text-gray-600 mt-1">Label: {product.label || 'None'}</p>
-            <p className="text-sm text-gray-600 mt-1">Desc: {product.description || 'No description'}</p>
-            <div className="flex gap-2 mt-2">
-              <Link href={`/products/${product.id}`}>
-                <span className="bg-blue-600 text-white px-3 py-1 rounded cursor-pointer">View</span>
-              </Link>
-              <button onClick={() => handleEdit(product)} className="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
-              <button onClick={() => handleDelete(product.id)} className="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
-            </div>
+    <div className="mt-24">
+      <div className="max-w-5xl mx-auto p-4">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">
+            {editingId ? '✏️ Edit Product' : '➕ Add Product'}
+          </h2>
+          <div className="flex gap-3">
+            <Link
+              href="/admin/orders"
+              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            >
+              📦 View Orders
+            </Link>
+            <button
+              onClick={() => {
+                localStorage.removeItem('admin');
+                router.push('/admin/login');
+              }}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              🔓 Logout
+            </button>
           </div>
-        ))}
+        </div>
+
+        {/* Show popup on success */}
+        {showPopup && (
+          <div className="bg-green-100 text-green-700 p-3 mb-4 rounded shadow">
+            ✅ Product {editingId ? 'updated' : 'added'} successfully!
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input type="text" name="name" value={form.name} onChange={handleChange} placeholder="Product Name" required className="border w-full p-2 rounded" />
+          <input type="text" name="price" value={form.price} onChange={handleChange} placeholder="Price" required className="border w-full p-2 rounded" />
+          <input type="text" name="offer_price" value={form.offer_price} onChange={handleChange} placeholder="Offer Price" required className="border w-full p-2 rounded" />
+
+          <select name="category" value={form.category} onChange={handleChange} required className="border w-full p-2 rounded">
+            <option value="">Select Category</option>
+            {CATEGORY_OPTIONS.map((cat) => <option key={cat} value={cat}>{cat}</option>)}
+          </select>
+
+          <select name="label" value={form.label} onChange={handleChange} className="border w-full p-2 rounded">
+            <option value="">Select Label</option>
+            {LABEL_OPTIONS.map((label) => <option key={label} value={label}>{label}</option>)}
+          </select>
+
+          <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" rows={3} className="border w-full p-2 rounded" />
+
+          <input type="file" name="image" accept="image/*" onChange={handleChange} className="border w-full p-2 rounded" {...(editingId ? {} : { required: true })} />
+          {preview && <img src={preview} className="w-full h-60 object-contain bg-white border rounded" />}
+
+          <button type="submit" className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700">
+            {loading ? (editingId ? 'Updating...' : 'Uploading...') : (editingId ? 'Update Product' : 'Upload Product')}
+          </button>
+        </form>
+
+        {/* Search & Filter */}
+        <div className="flex flex-col md:flex-row justify-between mt-10 gap-4">
+          <input type="text" placeholder="Search by product name..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="border p-2 rounded w-full md:max-w-sm" />
+          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="border p-2 rounded w-full md:w-auto">
+            <option value="">All Categories</option>
+            {CATEGORY_OPTIONS.map((cat) => <option key={cat}>{cat}</option>)}
+          </select>
+        </div>
+
+        {/* Pagination */}
+        <div className="flex justify-center items-center gap-4 mt-6">
+          <button onClick={() => setCurrentPage(p => Math.max(p - 1, 1))} disabled={currentPage === 1} className="bg-gray-200 px-3 py-1 rounded">Prev</button>
+          <span>Page {currentPage} of {totalPages}</span>
+          <button onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))} disabled={currentPage === totalPages} className="bg-gray-200 px-3 py-1 rounded">Next</button>
+        </div>
+
+        {/* Product List */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {paginated.map(product => (
+            <div key={product.id} className="border rounded p-4 flex flex-col">
+              <img src={product.image} alt={product.name} className="h-40 object-contain bg-white rounded mb-2" />
+              <h4 className="font-bold">{product.name}</h4>
+              <p>Category: {product.category}</p>
+              <p>Price: ₹{product.price}</p>
+              <p>Offer: ₹{product.offer_price}</p>
+              <p className="text-sm text-gray-600 mt-1">Label: {product.label || 'None'}</p>
+              <p className="text-sm text-gray-600 mt-1">Desc: {product.description || 'No description'}</p>
+              <div className="flex gap-2 mt-2">
+                <button onClick={() => handleEdit(product)} className="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
+                <button onClick={() => handleDelete(product.id)} className="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 }

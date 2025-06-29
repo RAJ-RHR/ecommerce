@@ -33,15 +33,19 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const stored = localStorage.getItem('cart');
     if (stored) setCartItems(JSON.parse(stored));
+    setIsHydrated(true);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cartItems));
-  }, [cartItems]);
+    if (isHydrated) {
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+    }
+  }, [cartItems, isHydrated]);
 
   const addToCart = (product: Product) => {
     setCartItems((prev) => {
@@ -87,7 +91,12 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const clearCart = () => setCartItems([]);
 
   const totalQuantity = cartItems.reduce((sum, item) => sum + item.quantity, 0);
-  const totalAmount = cartItems.reduce((sum, item) => sum + item.quantity * item.offer_price, 0);
+  const totalAmount = cartItems.reduce(
+    (sum, item) => sum + item.quantity * item.offer_price,
+    0
+  );
+
+  if (!isHydrated) return null;
 
   return (
     <CartContext.Provider

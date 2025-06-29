@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import { addDoc, collection, Timestamp } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
 export default function CheckoutPage() {
   const { cartItems, clearCart } = useCart();
@@ -17,8 +19,6 @@ export default function CheckoutPage() {
   const [submitted, setSubmitted] = useState(false);
 
   const total = cartItems.reduce((sum, item) => sum + item.offer_price * item.quantity, 0);
-
-  // ✅ Calculate total savings
   const totalSavings = cartItems.reduce(
     (sum, item) => sum + (item.price - item.offer_price) * item.quantity,
     0
@@ -28,10 +28,25 @@ export default function CheckoutPage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    clearCart();
+
+    try {
+      // Save order to Firestore
+      const docRef = await addDoc(collection(db, 'orders'), {
+        ...form,
+        cartItems,
+        total,
+        totalSavings,
+        createdAt: Timestamp.now(),
+      });
+
+      console.log('Order ID:', docRef.id);
+      setSubmitted(true);
+      clearCart();
+    } catch (error) {
+      console.error('Error saving order:', error);
+    }
   };
 
   if (submitted) {
@@ -64,43 +79,40 @@ export default function CheckoutPage() {
             {/* Cart Details */}
             <div className="bg-white shadow rounded-lg p-4">
               <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
-             <ul className="space-y-4">
-  {cartItems.map((item) => (
-    <li key={item.id} className="flex gap-4 items-center border-b pb-4">
-      <Image
-        src={item.image}
-        alt={item.name}
-        width={64}
-        height={64}
-        className="w-16 h-16 object-contain bg-white border rounded"
-      />
-      <div className="flex-1">
-        <p className="font-medium">{item.name}</p>
-        <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
-        <p className="text-sm text-gray-500">
-          Price: <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
-          <span className="text-green-700 font-semibold">₹{item.offer_price}</span>
-        </p>
-      </div>
-      <div className="text-right font-semibold text-green-700">
-        ₹{item.offer_price * item.quantity}
-      </div>
-    </li>
-  ))}
-  <li className="flex justify-between pt-4 text-lg font-bold border-t">
-    <span>Total:</span>
-    <span>₹{total}</span>
-  </li>
-
-  {/* ✅ Updated to green */}
-  {totalSavings > 0 && (
-    <li className="flex justify-between text-sm text-green-600 font-medium">
-      <span> You saved ₹{totalSavings.toFixed(2)} on this order 🎉</span>
-      <span>₹{totalSavings}</span>
-    </li>
-  )}
-</ul>
-
+              <ul className="space-y-4">
+                {cartItems.map((item) => (
+                  <li key={item.id} className="flex gap-4 items-center border-b pb-4">
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={64}
+                      height={64}
+                      className="w-16 h-16 object-contain bg-white border rounded"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium">{item.name}</p>
+                      <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
+                      <p className="text-sm text-gray-500">
+                        Price: <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
+                        <span className="text-green-700 font-semibold">₹{item.offer_price}</span>
+                      </p>
+                    </div>
+                    <div className="text-right font-semibold text-green-700">
+                      ₹{item.offer_price * item.quantity}
+                    </div>
+                  </li>
+                ))}
+                <li className="flex justify-between pt-4 text-lg font-bold border-t">
+                  <span>Total:</span>
+                  <span>₹{total}</span>
+                </li>
+                {totalSavings > 0 && (
+                  <li className="flex justify-between text-sm text-green-600 font-medium">
+                    <span>You saved ₹{totalSavings.toFixed(2)} on this order 🎉</span>
+                    <span>₹{totalSavings}</span>
+                  </li>
+                )}
+              </ul>
             </div>
 
             {/* User Form */}
@@ -140,7 +152,6 @@ export default function CheckoutPage() {
                 className="w-full p-2 border rounded"
               />
 
-              {/* ✅ Payment Method Section */}
               <div>
                 <h4 className="font-semibold mt-4 mb-2">Payment Method</h4>
                 <div className="space-y-2">
