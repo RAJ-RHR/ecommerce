@@ -2,7 +2,7 @@ import '@/app/globals.css';
 import ClientWrapper from './ClientWrapper';
 
 export const metadata = {
-  title: 'Your Herbal Store',
+  title: 'Herbolife Store',
   description: 'Buy Herbal Products Online',
 };
 
