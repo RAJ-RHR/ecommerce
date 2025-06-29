@@ -1,13 +1,14 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/contact/page": "app/contact/page.js",
-  "/admin/product/page": "app/admin/product/page.js",
-  "/category/[slug]/page": "app/category/[slug]/page.js",
-  "/cart/page": "app/cart/page.js",
-  "/checkout/page": "app/checkout/page.js",
   "/admin/login/page": "app/admin/login/page.js",
-  "/products/[id]/page": "app/products/[id]/page.js",
+  "/admin/product/page": "app/admin/product/page.js",
+  "/cart/page": "app/cart/page.js",
+  "/thank-you/page": "app/thank-you/page.js",
   "/page": "app/page.js",
   "/shop/page": "app/shop/page.js",
-  "/admin/orders/page": "app/admin/orders/page.js"
+  "/admin/orders/page": "app/admin/orders/page.js",
+  "/products/[id]/page": "app/products/[id]/page.js",
+  "/checkout/page": "app/checkout/page.js",
+  "/category/[slug]/page": "app/category/[slug]/page.js"
 }

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { addDoc, collection, Timestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { useRouter } from 'next/navigation';
 
 export default function CheckoutPage() {
   const { cartItems, clearCart } = useCart();
@@ -14,9 +15,9 @@ export default function CheckoutPage() {
     address: '',
     phone: '',
     email: '',
-    paymentMethod: 'Paytm',
+    paymentMethod: 'Cash On Delivery',
   });
-  const [submitted, setSubmitted] = useState(false);
+  const router = useRouter();
 
   const total = cartItems.reduce((sum, item) => sum + item.offer_price * item.quantity, 0);
   const totalSavings = cartItems.reduce(
@@ -31,34 +32,32 @@ export default function CheckoutPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!/^[6-9]\d{9}$/.test(form.phone)) {
+      alert('Please enter a valid 10-digit phone number starting with 6-9.');
+      return;
+    }
+
     try {
-      // Save order to Firestore
-      const docRef = await addDoc(collection(db, 'orders'), {
+      const createdAt = Timestamp.now();
+      const numericOrderId = 5505 + Math.floor(Date.now() / 1000) % 100000;
+
+      await addDoc(collection(db, 'orders'), {
         ...form,
         cartItems,
         total,
         totalSavings,
-        createdAt: Timestamp.now(),
+        createdAt,
+        status: 'Pending',
+        numericOrderId,
       });
 
-      console.log('Order ID:', docRef.id);
-      setSubmitted(true);
       clearCart();
+      router.push('/thank-you?oid=' + numericOrderId);
     } catch (error) {
       console.error('Error saving order:', error);
+      alert('Error placing order. Please try again.');
     }
   };
-
-  if (submitted) {
-    return (
-      <div className="max-w-2xl mx-auto p-6 text-center">
-        <h2 className="text-2xl font-bold mb-4">✅ Order Placed Successfully!</h2>
-        <p className="mb-6">Payment Method: <strong>{form.paymentMethod}</strong></p>
-        <p>Thank you for your order, {form.name}.</p>
-        <Link href="/" className="mt-4 inline-block bg-green-600 text-white px-4 py-2 rounded">Back to Home</Link>
-      </div>
-    );
-  }
 
   return (
     <div className="mt-20">
@@ -76,7 +75,7 @@ export default function CheckoutPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 gap-8">
-            {/* Cart Details */}
+            {/* Cart Summary */}
             <div className="bg-white shadow rounded-lg p-4">
               <h3 className="text-xl font-semibold mb-4">Order Summary</h3>
               <ul className="space-y-4">
@@ -93,7 +92,7 @@ export default function CheckoutPage() {
                       <p className="font-medium">{item.name}</p>
                       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                       <p className="text-sm text-gray-500">
-                        Price: <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
+                        <span className="line-through text-gray-400 mr-1">₹{item.price}</span>
                         <span className="text-green-700 font-semibold">₹{item.offer_price}</span>
                       </p>
                     </div>
@@ -115,9 +114,10 @@ export default function CheckoutPage() {
               </ul>
             </div>
 
-            {/* User Form */}
+            {/* Form */}
             <form onSubmit={handleSubmit} className="bg-white shadow rounded-lg p-4 space-y-4">
               <h3 className="text-xl font-semibold mb-4">Delivery Information</h3>
+
               <input
                 name="name"
                 value={form.name}
@@ -139,6 +139,7 @@ export default function CheckoutPage() {
                 value={form.phone}
                 onChange={handleChange}
                 placeholder="Phone Number"
+                pattern="[6-9][0-9]{9}"
                 required
                 className="w-full p-2 border rounded"
               />
@@ -156,18 +157,22 @@ export default function CheckoutPage() {
                 <h4 className="font-semibold mt-4 mb-2">Payment Method</h4>
                 <div className="space-y-2">
                   {['Paytm', 'Pay Online', 'Cash On Delivery', 'Bank Transfer'].map((method) => (
-                    <label className="block" key={method}>
+                    <label
+                      key={method}
+                      className={`block p-2 border rounded ${
+                        method !== 'Cash On Delivery' ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                    >
                       <input
                         type="radio"
                         name="paymentMethod"
                         value={method}
                         checked={form.paymentMethod === method}
                         onChange={handleChange}
+                        disabled={method !== 'Cash On Delivery'}
                         className="mr-2"
                       />
-                      {method === 'Paytm'
-                        ? 'Credit Card / Debit Card (Paytm PG)'
-                        : method}
+                      {method}
                     </label>
                   ))}
                 </div>

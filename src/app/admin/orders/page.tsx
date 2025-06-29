@@ -8,6 +8,7 @@ import {
   query,
   doc,
   updateDoc,
+  deleteDoc,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Link from 'next/link';
@@ -74,6 +75,18 @@ export default function AdminOrdersPage() {
       );
     } catch (err) {
       console.error('Error updating status:', err);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    const confirmDelete = confirm('Are you sure you want to delete this order?');
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(db, 'orders', orderId));
+      setOrders((prev) => prev.filter((order) => order.id !== orderId));
+    } catch (err) {
+      console.error('Failed to delete order:', err);
     }
   };
 
@@ -188,6 +201,13 @@ export default function AdminOrdersPage() {
                       )}
                     </select>
                   </div>
+
+                  <button
+                    onClick={() => handleDeleteOrder(order.id)}
+                    className="mt-2 bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                  >
+                    🗑️ Delete
+                  </button>
                 </div>
               </div>
 
