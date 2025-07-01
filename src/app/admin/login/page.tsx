@@ -19,7 +19,7 @@ export default function AdminLoginPage() {
     e.preventDefault();
     if (password === 'set@1306admin') {
       localStorage.setItem('admin', 'true');
-      router.push('/admin/orders');
+      router.push('/admin');
     } else {
       setError('Incorrect password');
     }
