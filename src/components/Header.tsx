@@ -36,7 +36,7 @@ export default function Header() {
             slug: data.slug,
           } as ProductWithSlug;
         })
-        .filter(Boolean); // remove nulls
+    .filter((item): item is ProductWithSlug => item !== null); // ✅ safe and typed
       setAllProducts(products);
     };
 
