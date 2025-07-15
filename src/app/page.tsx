@@ -18,6 +18,7 @@ type Product = {
   category: string;
   label?: string;
   description?: string;
+  slug?: string;
 };
 
 export default function HomePage() {
@@ -81,6 +82,7 @@ export default function HomePage() {
 
   const renderProductCard = (product: Product) => {
     const inCart = cartItems.find((item) => item.id === product.id);
+    const productSlugLink = product.slug ? `/products/${product.slug}` : `/products/${product.id}`;
 
     return (
       <div
@@ -92,7 +94,7 @@ export default function HomePage() {
             {product.label}
           </span>
         )}
-        <Link href={`/products/${product.id}`}>
+        <Link href={productSlugLink}>
           <div className="overflow-hidden rounded-xl mb-2 transition-transform duration-300 hover:scale-105">
             <img
               src={product.image}

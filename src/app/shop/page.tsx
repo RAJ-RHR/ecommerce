@@ -9,6 +9,7 @@ import { useCart } from '@/context/CartContext';
 
 type Product = {
   id: string;
+  slug: string;
   name: string;
   image: string;
   price: number;
@@ -49,6 +50,7 @@ export default function ShopPage() {
       const raw = doc.data();
       return {
         id: doc.id,
+        slug: raw.slug,
         ...raw,
         price: Number(raw.price),
         offer_price: Number(raw.offer_price),
@@ -166,12 +168,12 @@ export default function ShopPage() {
             >
               {product.label && (
                 <div className="absolute top-2 left-2 z-20">
-                  <span className={`text-xs text-white  z-20 px-2 py-1 rounded ${getLabelColor(product.label)}`}>
+                  <span className={`text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
                     {product.label}
                   </span>
                 </div>
               )}
-              <Link href={`/products/${product.id}`}>
+              <Link href={`/products/${product.slug}`}>
                 <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
                   <img
                     src={product.image}

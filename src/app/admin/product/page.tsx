@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import {
   collection,
   getDocs,
@@ -9,15 +9,41 @@ import {
   doc,
   addDoc,
   serverTimestamp,
+  DocumentData,
 } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+const generateSlug = (text: string): string =>
+  text
+    .toLowerCase()
+    .replace(/[^؀-ۿ\w\s-]/g, '')
+    .trim()
+    .replace(/\s+/g, '-');
+
+const generateUniqueSlug = async (baseSlug: string, editingId: string | null = null): Promise<string> => {
+  const productsRef = collection(db, 'products');
+  const snapshot = await getDocs(productsRef);
+
+  const existingSlugs = snapshot.docs
+    .filter((doc) => doc.id !== editingId)
+    .map((doc) => (doc.data() as DocumentData).slug);
+
+  let uniqueSlug = baseSlug;
+  let counter = 1;
+
+  while (existingSlugs.includes(uniqueSlug)) {
+    uniqueSlug = `${baseSlug}-${counter}`;
+    counter++;
+  }
+
+  return uniqueSlug;
+};
+
 export default function AddProductPage() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
-
   const [form, setForm] = useState({
     name: '',
     price: '',
@@ -29,7 +55,7 @@ export default function AddProductPage() {
   });
 
   const [preview, setPreview] = useState<string | null>(null);
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<DocumentData[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +87,7 @@ export default function AddProductPage() {
       setIsAuthorized(true);
       fetchProducts();
 
-      let timeout: NodeJS.Timeout;
+      let timeout: ReturnType<typeof setTimeout>;
       const resetTimer = () => {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
@@ -82,7 +108,7 @@ export default function AddProductPage() {
     } else {
       router.push('/admin/login');
     }
-  }, []);
+  }, [router]);
 
   const fetchProducts = async () => {
     const querySnapshot = await getDocs(collection(db, 'products'));
@@ -93,8 +119,8 @@ export default function AddProductPage() {
     setProducts(data);
   };
 
-  const handleChange = (e: any) => {
-    const { name, value, files } = e.target;
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, files } = e.target as HTMLInputElement;
     if (files && files[0]) {
       setForm({ ...form, image: files[0] });
       setPreview(URL.createObjectURL(files[0]));
@@ -103,7 +129,7 @@ export default function AddProductPage() {
     }
   };
 
-  const uploadToCloudinary = async (file: File) => {
+  const uploadToCloudinary = async (file: File): Promise<string> => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'herbolife_upload');
@@ -115,7 +141,7 @@ export default function AddProductPage() {
     return data.secure_url;
   };
 
-  const handleSubmit = async (e: any) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
@@ -129,6 +155,9 @@ export default function AddProductPage() {
       }
     }
 
+    const baseSlug = generateSlug(form.name);
+    const slug = await generateUniqueSlug(baseSlug, editingId);
+
     const productData = {
       name: form.name,
       price: form.price,
@@ -136,6 +165,7 @@ export default function AddProductPage() {
       category: form.category,
       label: form.label,
       description: form.description,
+      slug,
       ...(imageUrl && { image: imageUrl }),
     };
 
@@ -168,7 +198,7 @@ export default function AddProductPage() {
     setTimeout(() => setShowPopup(false), 3000);
   };
 
-  const handleEdit = (product: any) => {
+  const handleEdit = (product: DocumentData) => {
     setForm({
       name: product.name,
       price: product.price,
@@ -199,6 +229,7 @@ export default function AddProductPage() {
   const paginated = filteredProducts.slice((currentPage - 1) * perPage, currentPage * perPage);
 
   if (!isAuthorized) return null;
+
 
   return (
     <div className="mt-24">
