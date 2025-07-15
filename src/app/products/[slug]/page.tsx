@@ -132,19 +132,22 @@ export default function ProductPage() {
       </Script>
 
       <div className="mt-20 px-4 md:px-8">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="relative bg-white p-4 shadow rounded-xl">
+        <div className="grid md:grid-cols-2 gap-6 items-start">
+          {/* Image Column (fixed height) */}
+          <div className="relative bg-white p-4 shadow rounded-xl h-[400px] flex items-center justify-center">
             {product.label && (
               <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
                 {product.label}
               </span>
             )}
-            <img src={product.image} alt={product.name} className="w-full h-96 object-contain" />
+            <img src={product.image} alt={product.name} className="max-h-full object-contain" />
           </div>
 
-          <div>
+          {/* Text Content Column (auto height) */}
+          <div className="flex flex-col justify-start">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <p className="text-lg text-gray-600 mb-2">Category: {product.category}</p>
+
             <div className="flex items-center gap-3 mb-4">
               <p className="text-xl line-through text-gray-500">₹{product.price.toFixed(2)}</p>
               <p className="text-2xl font-bold text-green-600">₹{product.offer_price.toFixed(2)}</p>
@@ -167,11 +170,14 @@ export default function ProductPage() {
               </button>
             )}
 
-            <p className="text-sm text-gray-700 mt-4">{product.description}</p>
+            <div className="text-gray-700 text-sm whitespace-pre-line mt-4 leading-relaxed">
+              {product.description}
+            </div>
           </div>
         </div>
       </div>
 
+      {/* Related Products */}
       {related.length > 0 && (
         <section className="px-4 md:px-8 my-12">
           <h2 className="text-xl font-bold mb-4">Related Products</h2>

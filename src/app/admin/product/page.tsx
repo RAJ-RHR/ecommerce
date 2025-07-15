@@ -234,28 +234,35 @@ export default function AddProductPage() {
   return (
     <div className="mt-24">
       <div className="max-w-5xl mx-auto p-4">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold">
-            {editingId ? '✏️ Edit Product' : '➕ Add Product'}
-          </h2>
-          <div className="flex gap-3">
-            <Link
-              href="/admin/orders"
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-            >
-              📦 View Orders
-            </Link>
-            <button
-              onClick={() => {
-                localStorage.removeItem('admin');
-                router.push('/admin/login');
-              }}
-              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-            >
-              🔓 Logout
-            </button>
-          </div>
-        </div>
+     <div className="flex justify-between items-center mb-6">
+  <h2 className="text-2xl font-bold">
+    {editingId ? '✏️ Edit Product' : '➕ Add Product'}
+  </h2>
+  <div className="flex gap-3">
+    <Link
+      href="/admin"
+      className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800"
+    >
+      🏠 Home
+    </Link>
+    <Link
+      href="/admin/orders"
+      className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+    >
+      📦 View Orders
+    </Link>
+    <button
+      onClick={() => {
+        localStorage.removeItem('admin');
+        router.push('/admin/login');
+      }}
+      className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+    >
+      🔓 Logout
+    </button>
+  </div>
+</div>
+
 
         {/* Show popup on success */}
         {showPopup && (

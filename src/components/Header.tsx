@@ -8,31 +8,38 @@ import { db } from '@/lib/firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import type { Product } from '@/context/CartContext';
 
+type ProductWithSlug = Product & { slug: string };
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
-  const [allProducts, setAllProducts] = useState<Product[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductWithSlug[]>([]);
   const { totalQuantity, totalAmount } = useCart();
 
   useEffect(() => {
     const fetchProducts = async () => {
       const snapshot = await getDocs(collection(db, 'products'));
-      const products: Product[] = snapshot.docs.map((doc) => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          name: data.name,
-          image: data.image,
-          category: data.category,
-          label: data.label,
-          description: data.description,
-          price: Number(data.price),
-          offer_price: Number(data.offer_price),
-        };
-      });
+      const products = snapshot.docs
+        .map((doc) => {
+          const data = doc.data();
+          if (!data.slug) return null; // Skip products without slug
+          return {
+            id: doc.id,
+            name: data.name,
+            image: data.image,
+            category: data.category,
+            label: data.label,
+            description: data.description || '',
+            price: Number(data.price),
+            offer_price: Number(data.offer_price),
+            slug: data.slug,
+          } as ProductWithSlug;
+        })
+        .filter(Boolean); // remove nulls
       setAllProducts(products);
     };
+
     fetchProducts();
   }, []);
 
@@ -48,12 +55,10 @@ export default function Header() {
   return (
     <header className="bg-white shadow-md sticky top-0 z-50 font-poppins">
       <div className="w-full max-w-screen-xl mx-auto px-4 py-4 h-24 flex items-center justify-between">
-        {/* Mobile menu icon */}
         <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-xl text-gray-700">
           <FaBars />
         </button>
 
-        {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
           <img
             src="/logo.png"
@@ -62,7 +67,6 @@ export default function Header() {
           />
         </Link>
 
-        {/* Desktop menu */}
         <nav className="hidden md:flex space-x-8 font-medium text-gray-700 text-base">
           <Link href="/">Home</Link>
           <Link href="/shop">Shop</Link>
@@ -71,14 +75,11 @@ export default function Header() {
           <Link href="/contact">Contact Us</Link>
         </nav>
 
-        {/* Icons */}
         <div className="flex items-center space-x-3 text-gray-700 text-xl relative -translate-x-2">
-          {/* Search */}
           <button onClick={() => setSearchOpen(!searchOpen)} className="hover:text-green-600">
             <FaSearch />
           </button>
 
-          {/* Cart */}
           <div className="flex items-center space-x-2">
             <div className="relative">
               <Link href="/cart">
@@ -101,7 +102,6 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Search Input */}
       {searchOpen && (
         <div className="relative w-full max-w-screen-xl mx-auto px-4 pb-4">
           <div className="w-full md:w-1/2 mx-auto relative">
@@ -116,7 +116,7 @@ export default function Header() {
               <div className="absolute z-50 w-full bg-white mt-1 border rounded shadow max-h-72 overflow-y-auto">
                 {filtered.map((product) => (
                   <Link
-                    href={`/products/${product.id}`}
+                    href={`/products/${product.slug}`}
                     key={product.id}
                     onClick={() => {
                       setSearchOpen(false);
@@ -141,25 +141,20 @@ export default function Header() {
         </div>
       )}
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-white px-4 pb-4 space-y-2 font-medium text-gray-700 text-base">
-          {[
-            ['Home', '/'],
-            ['Shop', '/shop'],
-            ['Cart', '/cart'],
-            ['Checkout', '/checkout'],
-            ['Contact Us', '/contact'],
-          ].map(([label, path]) => (
-            <Link
-              key={path}
-              href={path}
-              className="block border-b py-2"
-              onClick={() => setMenuOpen(false)}
-            >
-              {label}
-            </Link>
-          ))}
+          {[['Home', '/'], ['Shop', '/shop'], ['Cart', '/cart'], ['Checkout', '/checkout'], ['Contact Us', '/contact']].map(
+            ([label, path]) => (
+              <Link
+                key={path}
+                href={path}
+                className="block border-b py-2"
+                onClick={() => setMenuOpen(false)}
+              >
+                {label}
+              </Link>
+            )
+          )}
         </div>
       )}
     </header>

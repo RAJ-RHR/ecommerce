@@ -261,7 +261,7 @@ export default function AdminOrdersPage() {
       )}
 
       <Link
-        href="/"
+        href="/admin"
         className="mt-10 inline-block text-blue-600 hover:underline"
       >
         ← Back to Home
