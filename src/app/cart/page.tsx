@@ -12,6 +12,16 @@ export default function CartPage() {
     clearCart,
     totalAmount,
   } = useCart();
+  
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const today = new Date();
+  const deliveryStart = new Date(today);
+  const deliveryEnd = new Date(today);
+  deliveryStart.setDate(today.getDate() + 6);
+  deliveryEnd.setDate(today.getDate() + 8);
+
 
   return (
     <>
@@ -78,7 +88,7 @@ export default function CartPage() {
               </button>
             </div>
           ))}
-
+            
           <div className="mt-6 text-right text-xl font-semibold">
             Total: ₹{totalAmount.toFixed(2)}
           </div>
@@ -96,8 +106,14 @@ export default function CartPage() {
                 Buy Now
               </button>
             </Link>
+            
           </div>
+          <div className="mt-4 text-sm text-gray-500">
+              🚚 Estimated delivery: {formatDate(deliveryStart)} – {formatDate(deliveryEnd)}
+            </div>
+
         </div>
+        
       )}
     </>
   );

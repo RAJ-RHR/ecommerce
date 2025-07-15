@@ -60,6 +60,15 @@ export default function CheckoutPage() {
       alert('Error placing order. Please try again.');
     }
   };
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const today = new Date();
+  const deliveryStart = new Date(today);
+  const deliveryEnd = new Date(today);
+  deliveryStart.setDate(today.getDate() + 6);
+  deliveryEnd.setDate(today.getDate() + 8);
+
 
   return (
     <div className="mt-20">
@@ -195,6 +204,10 @@ export default function CheckoutPage() {
                 Order
               </button>
             </form>
+            <div className="mt-4 text-sm text-gray-500">
+              🚚 Estimated delivery: {formatDate(deliveryStart)} – {formatDate(deliveryEnd)}
+            </div>
+
           </div>
         )}
       </div>
