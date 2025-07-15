@@ -16,11 +16,18 @@ export default function ProductPage() {
   const { slug } = useParams();
   const [product, setProduct] = useState<ProductWithSlug | null>(null);
   const [related, setRelated] = useState<ProductWithSlug[]>([]);
+  const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
+  const [loading, setLoading] = useState(true); // 👈 Added loading state
   const { cartItems, addToCart, increaseQty, decreaseQty, removeFromCart } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
-      if (!slug || typeof slug !== 'string') return;
+      setLoading(true); // 👈 Start loading
+
+      if (!slug || typeof slug !== 'string') {
+        setLoading(false);
+        return;
+      }
 
       const q = query(collection(db, 'products'), where('slug', '==', slug), limit(1));
       const snapshot = await getDocs(q);
@@ -28,6 +35,7 @@ export default function ProductPage() {
       if (!snapshot.empty) {
         const docSnap = snapshot.docs[0];
         const data = docSnap.data();
+
         const fetchedProduct: ProductWithSlug = {
           id: docSnap.id,
           name: data.name,
@@ -39,9 +47,12 @@ export default function ProductPage() {
           offer_price: Number(data.offer_price),
           slug: data.slug,
         };
+
         setProduct(fetchedProduct);
         fetchRelated(fetchedProduct.category, fetchedProduct.slug);
       }
+
+      setLoading(false); // 👈 Stop loading
     };
 
     const fetchRelated = async (category: string, excludeSlug: string) => {
@@ -66,8 +77,43 @@ export default function ProductPage() {
       setRelated(relatedProducts);
     };
 
+    const fetchCategories = async () => {
+      const snapshot = await getDocs(collection(db, 'products'));
+      const categoryMap = new Map<string, ProductWithSlug>();
+
+      snapshot.docs.forEach((doc) => {
+        const d = doc.data();
+        const cat = d.category;
+        if (!categoryMap.has(cat)) {
+          categoryMap.set(cat, {
+            id: doc.id,
+            name: d.name,
+            image: d.image,
+            category: d.category,
+            label: d.label,
+            description: d.description || 'Ayurvedic Product',
+            price: Number(d.price),
+            offer_price: Number(d.offer_price),
+            slug: d.slug,
+          });
+        }
+      });
+
+      setCategoryShowcase(Array.from(categoryMap.values()));
+    };
+
     fetchProduct();
+    fetchCategories();
   }, [slug]);
+
+  // ✅ Handle loading and not found state separately
+  if (loading) {
+    return <div className="mt-24 text-center text-gray-500">Loading product...</div>;
+  }
+
+  if (!product) {
+    return <div className="mt-24 text-center text-red-500">Product not found.</div>;
+  }
 
   if (!product) return <div className="mt-24 text-center text-gray-600">Product not found</div>;
 
@@ -92,6 +138,15 @@ export default function ProductPage() {
   const title = `${product.name} | Herbolife`;
   const description = product.description;
 
+  const formatDate = (date: Date) =>
+    date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  const today = new Date();
+  const deliveryStart = new Date(today);
+  const deliveryEnd = new Date(today);
+  deliveryStart.setDate(today.getDate() + 6);
+  deliveryEnd.setDate(today.getDate() + 8);
+
   return (
     <>
       <Head>
@@ -106,9 +161,6 @@ export default function ProductPage() {
         <meta property="og:type" content="product" />
         <meta property="og:url" content={canonicalUrl} />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:description" content={description} />
-        <meta name="twitter:image" content={product.image} />
       </Head>
 
       <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
@@ -132,18 +184,16 @@ export default function ProductPage() {
       </Script>
 
       <div className="mt-20 px-4 md:px-8">
-        <div className="grid md:grid-cols-2 gap-6 items-start">
-          {/* Image Column (fixed height) */}
-          <div className="relative bg-white p-4 shadow rounded-xl h-[400px] flex items-center justify-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <div className="relative bg-white p-4 shadow rounded-xl">
             {product.label && (
               <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(product.label)}`}>
                 {product.label}
               </span>
             )}
-            <img src={product.image} alt={product.name} className="max-h-full object-contain" />
+            <img src={product.image} alt={product.name} className="w-full h-96 object-contain" />
           </div>
 
-          {/* Text Content Column (auto height) */}
           <div className="flex flex-col justify-start">
             <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
             <p className="text-lg text-gray-600 mb-2">Category: {product.category}</p>
@@ -160,19 +210,23 @@ export default function ProductPage() {
                   <span>{inCart.quantity}</span>
                   <button onClick={() => increaseQty(product.id)} className="px-3 py-1 border rounded-full">+</button>
                 </div>
-                <Link href="/cart" className="inline-block mt-2 border border-blue-600 text-blue-600 px-4 py-2 rounded-full hover:bg-blue-50">
+                <Link href="/cart"   className="w-full max-w-xs py-2 text-sm border border-blue-600 text-blue-600 rounded-full hover:bg-blue-50 transition text-center block mt-2">
                   Go to Cart
                 </Link>
               </>
             ) : (
-              <button onClick={() => addToCart(product)} className="border border-green-600 text-green-600 px-6 py-2 rounded-full hover:bg-green-50">
+              <button onClick={() => addToCart(product)} className="w-full max-w-xs py-2 text-sm border border-green-600 text-green-600 rounded-full hover:bg-green-50 transition">
                 Add to Cart
               </button>
             )}
 
-            <div className="text-gray-700 text-sm whitespace-pre-line mt-4 leading-relaxed">
-              {product.description}
+            <div className="mt-4 text-sm text-gray-500">
+              🚚 Estimated delivery: {formatDate(deliveryStart)} – {formatDate(deliveryEnd)}
             </div>
+          </div>
+
+          <div className="md:col-span-2 mt-6 text-gray-700 text-sm whitespace-pre-line leading-relaxed">
+            {product.description}
           </div>
         </div>
       </div>
@@ -220,6 +274,30 @@ export default function ProductPage() {
                 </div>
               );
             })}
+          </div>
+        </section>
+      )}
+
+      {/* Shop by Category */}
+      {categoryShowcase.length > 0 && (
+        <section className="w-full mt-12 mb-8 px-4 md:px-8">
+          <h2 className="text-2xl font-bold mb-4 text-center">
+            SHOP BY <span className="text-green-600">CATEGORY</span>
+          </h2>
+          <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar">
+            {categoryShowcase.map((prod) => (
+              <div
+                key={prod.category}
+                className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+              >
+                <Link href={`/category/${prod.category}`}>
+                  <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
+                    <img src={prod.image} alt={prod.name} className="w-full h-32 object-contain" />
+                  </div>
+                  <h3 className="font-semibold text-sm text-center">{prod.category}</h3>
+                </Link>
+              </div>
+            ))}
           </div>
         </section>
       )}

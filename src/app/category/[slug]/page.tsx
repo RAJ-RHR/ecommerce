@@ -61,6 +61,7 @@ const CategoryPage = () => {
         if (!randomByCategory[data.category]) {
           randomByCategory[data.category] = {
             id: doc.id,
+              slug: data.slug, // ✅ Add this line
             name: data.name,
             image: data.image,
             category: data.category,

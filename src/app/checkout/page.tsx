@@ -85,15 +85,19 @@ export default function CheckoutPage() {
               <ul className="space-y-4">
                 {cartItems.map((item) => (
                   <li key={item.id} className="flex gap-4 items-center border-b pb-4">
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={64}
-                      height={64}
-                      className="w-16 h-16 object-contain bg-white border rounded"
-                    />
+                    <Link href={`/products/${item.slug}`}>
+                      <Image
+                        src={item.image}
+                        alt={item.name}
+                        width={64}
+                        height={64}
+                        className="w-16 h-16 object-contain bg-white border rounded hover:scale-105 transition"
+                      />
+                    </Link>
                     <div className="flex-1">
-                      <p className="font-medium">{item.name}</p>
+                      <Link href={`/products/${item.slug}`}>
+                        <p className="font-medium hover:text-green-700 cursor-pointer">{item.name}</p>
+                      </Link>
                       <p className="text-sm text-gray-500">Quantity: {item.quantity}</p>
                       <p className="text-sm text-gray-500">
                         <span className="line-through text-gray-400 mr-1">₹{item.price.toFixed(2)}</span>

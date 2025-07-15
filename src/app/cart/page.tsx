@@ -32,14 +32,27 @@ export default function CartPage() {
 
           {cartItems.map((item) => (
             <div key={item.id} className="flex items-center gap-4 mb-4 border-b pb-4">
-              <img src={item.image} alt={item.name} className="w-24 h-24 object-contain" />
+              <Link href={`/products/${item.slug}`}>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  className="w-24 h-24 object-contain hover:scale-105 transition cursor-pointer"
+                />
+              </Link>
+
               <div className="flex-1">
-                <h3 className="font-semibold text-base">{item.name}</h3>
+                <Link href={`/products/${item.slug}`}>
+                  <h3 className="font-semibold text-base hover:text-green-600 cursor-pointer">
+                    {item.name}
+                  </h3>
+                </Link>
                 <p className="text-gray-500 text-sm mb-1">Category: {item.category}</p>
+
                 <div className="flex items-center gap-2">
                   <p className="text-sm text-gray-400 line-through">₹{item.price.toFixed(2)}</p>
                   <p className="text-green-600 font-bold text-lg">₹{item.offer_price.toFixed(2)}</p>
                 </div>
+
                 <div className="flex items-center gap-2 mt-2">
                   <button
                     onClick={() => decreaseQty(item.id)}
@@ -56,6 +69,7 @@ export default function CartPage() {
                   </button>
                 </div>
               </div>
+
               <button
                 onClick={() => removeFromCart(item.id)}
                 className="text-red-600 hover:underline"

@@ -18,7 +18,7 @@ type Product = {
   category: string;
   label?: string;
   description?: string;
-  slug?: string;
+ slug: string; // <-- make this required
 };
 
 export default function HomePage() {

@@ -11,6 +11,8 @@ export type Product = {
   category: string;
   label?: string;
   description?: string;
+  slug: string; // ✅ Add this
+
 };
 
 export type CartItem = Product & {
