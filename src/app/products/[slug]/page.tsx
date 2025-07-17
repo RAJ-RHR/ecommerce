@@ -1,5 +1,5 @@
 'use client';
-import ProductSchema from '@/components/ProductSchema';
+
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
@@ -11,7 +11,6 @@ import Script from 'next/script';
 import type { Product } from '@/context/CartContext';
 
 type ProductWithSlug = Product & { slug: string };
-export const revalidate = 86400;
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -164,85 +163,25 @@ export default function ProductPage() {
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-     <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
-  {JSON.stringify({
-    "@context": "https://schema.org/",
-    "@type": "Product",
-    name: product.name,
-    image: [product.image],
-    description: product.description,
-    sku: product.id,
-    brand: {
-      "@type": "Brand",
-      name: "Herbolife"
-    },
-    review: {
-      "@type": "Review",
-      reviewRating: {
-        "@type": "Rating",
-        ratingValue: "4",
-        bestRating: "5"
-      },
-      author: {
-        "@type": "Person",
-        name: "Verified Buyer"
-      }
-    },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.5",
-      reviewCount: "23"
-    },
-    offers: {
-      "@type": "Offer",
-      url: `https://store.herbolife.in/products/${product.slug}`,
-      priceCurrency: "INR",
-      price: product.offer_price,
-      priceValidUntil: "2025-12-31",
-      itemCondition: "https://schema.org/NewCondition",
-      availability: "https://schema.org/InStock",
-
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingRate: {
-          "@type": "MonetaryAmount",
-          value: "0.00",
-          currency: "INR"
-        },
-        shippingDestination: {
-          "@type": "DefinedRegion",
-          addressCountry: "IN"
-        },
-        deliveryTime: {
-          "@type": "ShippingDeliveryTime",
-          handlingTime: {
-            "@type": "QuantitativeValue",
-            minValue: 1,
-            maxValue: 2,
-            unitCode: "d"
+      <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
+        {JSON.stringify({
+          '@context': 'https://schema.org/',
+          '@type': 'Product',
+          name: product.name,
+          image: [product.image],
+          description: description,
+          sku: product.id,
+          brand: { '@type': 'Brand', name: 'Herbolife' },
+          offers: {
+            '@type': 'Offer',
+            url: canonicalUrl,
+            priceCurrency: 'INR',
+            price: product.offer_price,
+            itemCondition: 'https://schema.org/NewCondition',
+            availability: 'https://schema.org/InStock',
           },
-          transitTime: {
-            "@type": "QuantitativeValue",
-            minValue: 2,
-            maxValue: 5,
-            unitCode: "d"
-          }
-        }
-      },
-
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "IN",
-        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 7,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn"
-      }
-    }
-  })}
-</Script>
-
-
+        })}
+      </Script>
 
       <div className="mt-20 px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
