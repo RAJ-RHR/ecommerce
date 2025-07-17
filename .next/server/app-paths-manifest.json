@@ -1,17 +1,17 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/admin/contacts/page": "app/admin/contacts/page.js",
-  "/admin/login/page": "app/admin/login/page.js",
   "/admin/page": "app/admin/page.js",
   "/admin/orders/page": "app/admin/orders/page.js",
-  "/cart/page": "app/cart/page.js",
   "/admin/product/page": "app/admin/product/page.js",
   "/checkout/page": "app/checkout/page.js",
-  "/category/[slug]/page": "app/category/[slug]/page.js",
+  "/cart/page": "app/cart/page.js",
+  "/admin/contacts/page": "app/admin/contacts/page.js",
   "/contact/page": "app/contact/page.js",
+  "/page": "app/page.js",
+  "/category/[slug]/page": "app/category/[slug]/page.js",
   "/privacy-policy/page": "app/privacy-policy/page.js",
   "/shop/page": "app/shop/page.js",
   "/thank-you/page": "app/thank-you/page.js",
-  "/page": "app/page.js",
+  "/admin/login/page": "app/admin/login/page.js",
   "/products/[slug]/page": "app/products/[slug]/page.js"
 }

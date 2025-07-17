@@ -20,7 +20,6 @@ type Product = {
   description?: string;
  slug: string; // <-- make this required
 };
-export const revalidate = 3600; // revalidate every hour
 
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -150,7 +149,7 @@ export default function HomePage() {
 
   return (
     <>
-      <Head>
+     <Head>
   <title>Herbo life | Herbal Health & Wellness Store</title>
   <meta name="description" content="Shop authentic ayurvedic health and wellness products at best prices. High quality, original, and effective herbal solutions - Herbo life." />
   <meta name="keywords" content="Herbo life, ayurvedic, herbal, wellness, organic, health, supplements, immunity, natural,sexual wellness,Power Plus, Weight loss, Female health , men's health" />
@@ -165,7 +164,6 @@ export default function HomePage() {
   
   <meta name="twitter:card" content="summary_large_image" />
 </Head>
-
 
       {/* Banner Section */}
       <div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
