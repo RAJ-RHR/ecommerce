@@ -198,11 +198,11 @@ const CategoryPage = () => {
 
       {/* Shop by Category Section */}
       {Object.keys(allCategories).length > 0 && (
-       <section className="w-full mt-12 mb-8 px-4 md:px-8">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            SHOP BY <span className="text-green-600">CATEGORY</span>
+        <section className="px-4 md:px-8 mt-8">
+          <h2 className="text-2xl font-bold mb-4">
+            Shop by <span className="text-green-600">Category</span>
           </h2>
-          <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar">
+          <div className="flex overflow-x-auto gap-4 hide-scrollbar md:grid md:grid-cols-4 md:space-x-0">
             {Object.entries(allCategories).map(([category, product]) => (
               <Link
                 href={`/category/${category}`}
