@@ -18,7 +18,8 @@ type Product = {
   label?: string;
   quantity?: number;
 };
-export const revalidate = 86400;
+
+
 export default function ShopPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [search, setSearch] = useState('');

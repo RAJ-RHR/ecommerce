@@ -20,7 +20,8 @@ type Product = {
   description?: string;
  slug: string; // <-- make this required
 };
-export const revalidate = 86400;
+export const revalidate = 3600; // revalidate every hour
+
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [randomCategoryProducts, setRandomCategoryProducts] = useState<{ category: string; product: Product }[]>([]);
@@ -150,18 +151,21 @@ export default function HomePage() {
   return (
     <>
       <Head>
-        <title>Herbolife | Herbal Health & Wellness Store</title>
-        <meta name="description" content="Shop authentic herbal health and wellness products online. Natural, fast delivery, easy returns - Herbolife." />
-        <meta name="keywords" content="Herbolife, herbal, wellness, organic, health, ayurveda, supplements, immunity" />
-        <meta name="robots" content="index, follow" />
-        <link rel="canonical" href="https://store.herbolife.in/" />
-        <meta property="og:title" content="Herbolife | Herbal Health & Wellness Store" />
-        <meta property="og:description" content="Natural health and wellness products delivered fast. 100% genuine and ayurvedic. Start your wellness journey with Herbolife." />
-        <meta property="og:image" content="https://store.herbolife.in/images/banner1.jpg" />
-        <meta property="og:url" content="https://store.herbolife.in/" />
-        <meta property="og:type" content="website" />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Head>
+  <title>Herbo life | Herbal Health & Wellness Store</title>
+  <meta name="description" content="Shop authentic ayurvedic health and wellness products at best prices. High quality, original, and effective herbal solutions - Herbo life." />
+  <meta name="keywords" content="Herbo life, ayurvedic, herbal, wellness, organic, health, supplements, immunity, natural,sexual wellness,Power Plus, Weight loss, Female health , men's health" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://store.herbolife.in/" />
+  
+  <meta property="og:title" content="Herbo life | Herbal Health & Wellness Store" />
+  <meta property="og:description" content="Original and effective ayurvedic products delivered fast. 100% genuine, high-quality wellness essentials from Herbo life." />
+  <meta property="og:image" content="https://store.herbolife.in/images/banner1.jpg" />
+  <meta property="og:url" content="https://store.herbolife.in/" />
+  <meta property="og:type" content="website" />
+  
+  <meta name="twitter:card" content="summary_large_image" />
+</Head>
+
 
       {/* Banner Section */}
       <div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">

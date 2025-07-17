@@ -1,5 +1,5 @@
 'use client';
-
+import ProductSchema from '@/components/ProductSchema';
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
