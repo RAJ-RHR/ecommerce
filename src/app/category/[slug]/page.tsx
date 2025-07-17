@@ -196,32 +196,34 @@ const CategoryPage = () => {
         )}
       </main>
 
-      {/* Shop by Category Section */}
-      {Object.keys(allCategories).length > 0 && (
-        <section className="px-4 md:px-8 mt-8">
-          <h2 className="text-2xl font-bold mb-4">
-            Shop by <span className="text-green-600">Category</span>
-          </h2>
-          <div className="flex overflow-x-auto gap-4 hide-scrollbar md:grid md:grid-cols-4 md:space-x-0">
-            {Object.entries(allCategories).map(([category, product]) => (
-              <Link
-                href={`/category/${category}`}
-                key={category}
-                className="min-w-[45%] md:min-w-0 bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300 text-center"
-              >
-                <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-32 object-contain"
-                  />
-                </div>
-                <h3 className="font-semibold text-sm text-center">{category}</h3>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
+   {/* Shop by Category */}
+{Object.keys(allCategories).length > 0 && (
+  <section className="w-full mt-12 mb-8 px-4 md:px-8">
+    <h2 className="text-2xl font-bold mb-4 text-center">
+      SHOP BY <span className="text-green-600">CATEGORY</span>
+    </h2>
+    <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar">
+      {Object.entries(allCategories).map(([category, product]) => (
+        <div
+          key={category}
+          className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+        >
+          <Link href={`/category/${category}`}>
+            <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-32 object-contain"
+              />
+            </div>
+            <h3 className="font-semibold text-sm text-center">{category}</h3>
+          </Link>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
     </div>
   );
 };
