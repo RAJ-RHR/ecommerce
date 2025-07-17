@@ -20,7 +20,7 @@ type Product = {
   description?: string;
  slug: string; // <-- make this required
 };
-
+export const revalidate = 86400;
 export default function HomePage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [randomCategoryProducts, setRandomCategoryProducts] = useState<{ category: string; product: Product }[]>([]);

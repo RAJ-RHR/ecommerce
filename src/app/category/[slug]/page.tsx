@@ -225,5 +225,5 @@ const CategoryPage = () => {
     </div>
   );
 };
-
+export const revalidate = 86400;
 export default CategoryPage;
