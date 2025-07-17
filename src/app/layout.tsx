@@ -2,7 +2,7 @@ import '@/app/globals.css';
 import ClientWrapper from './ClientWrapper';
 
 export const metadata = {
-  title: 'Herbo life Store',
+  title: 'Herbolife Store',
   description:
     'Buy original Ayurvedic products at best prices. High-quality herbal supplements for wellness, immunity,male enhacement, weight loss, and more – only at Herbo life Store.',
   icons: {
