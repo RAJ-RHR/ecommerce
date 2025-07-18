@@ -277,8 +277,7 @@ export default function ProductPage() {
   </div>
 </div>
 
-
-            {renderAvailability()}
+ <div className="mb-4">{renderAvailability()}</div> {/* Gap added here */}
 
             {inCart ? (
               <>
