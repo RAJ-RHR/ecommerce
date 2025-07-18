@@ -218,19 +218,29 @@ export default function AdminOrdersPage() {
               <div className="border-t pt-2 mt-2">
                 <h3 className="font-semibold mb-2">🛒 Products:</h3>
                 <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {order.cartItems?.map((item: any, index: number) => (
-                    <li
-                      key={index}
-                      className="bg-gray-50 p-2 rounded border text-sm"
-                    >
-                      <p className="font-medium">{item.name}</p>
-                      <p>
-                        ₹{item.offer_price} x {item.quantity} = ₹
-                        {item.offer_price * item.quantity}
-                      </p>
-                    </li>
-                  ))}
-                </ul>
+  {order.cartItems?.map((item: any, index: number) => (
+    <li
+      key={index}
+      className="bg-gray-50 p-3 rounded border flex items-center gap-3"
+    >
+      {item.image && (
+        <img
+          src={item.image}
+          alt={item.name}
+          className="w-16 h-16 object-cover rounded"
+        />
+      )}
+      <div>
+        <p className="font-medium">{item.name}</p>
+        <p className="text-sm text-gray-700">
+          ₹{item.offer_price} × {item.quantity} = ₹
+          {item.offer_price * item.quantity}
+        </p>
+      </div>
+    </li>
+  ))}
+</ul>
+
               </div>
             </div>
           ))}

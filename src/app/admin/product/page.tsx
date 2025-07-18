@@ -116,17 +116,8 @@ export default function AddProductPage() {
     setReviews(snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
   };
 
-  const handleApproveReview = async (id: string) => {
-    await updateDoc(doc(db, 'reviews', id), { status: 'approved' });
-    fetchReviews();
-  };
-
-  const handleDeleteReview = async (id: string) => {
-    if (confirm('Delete this review?')) {
-      await deleteDoc(doc(db, 'reviews', id));
-      fetchReviews();
-    }
-  };
+  
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, files } = e.target as HTMLInputElement;
@@ -294,22 +285,7 @@ export default function AddProductPage() {
         ))}
       </div>
 
-      {/* Review Moderation Section */}
-      <h3 className="text-xl font-semibold mt-12 mb-4">📝 Review Moderation</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {reviews.map((review) => (
-          <div key={review.id} className="border rounded p-3 bg-white shadow">
-            <p className="font-semibold">{review.name} ({review.rating}⭐)</p>
-            <p className="text-gray-700 mt-1">{review.message}</p>
-            <div className="mt-2 flex gap-2">
-              {review.status !== 'approved' && (
-                <button onClick={() => handleApproveReview(review.id)} className="text-sm px-2 py-1 bg-green-600 text-white rounded">Approve</button>
-              )}
-              <button onClick={() => handleDeleteReview(review.id)} className="text-sm px-2 py-1 bg-red-600 text-white rounded">Delete</button>
-            </div>
-          </div>
-        ))}
-      </div>
+    
     </div>
   </div>
 );

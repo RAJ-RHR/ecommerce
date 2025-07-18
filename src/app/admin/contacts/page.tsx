@@ -6,6 +6,7 @@ import {
   getDocs,
   deleteDoc,
   doc,
+  updateDoc,
   orderBy,
   query,
 } from 'firebase/firestore';
@@ -20,6 +21,7 @@ interface Contact {
   message: string;
   phone?: string;
   createdAt?: any;
+  read?: boolean;
 }
 
 export default function AdminContactsPage() {
@@ -81,6 +83,21 @@ export default function AdminContactsPage() {
     }
   };
 
+  const toggleReadStatus = async (id: string, currentStatus: boolean = false) => {
+    try {
+      await updateDoc(doc(db, 'contacts', id), {
+        read: !currentStatus,
+      });
+      setContacts((prev) =>
+        prev.map((c) =>
+          c.id === id ? { ...c, read: !currentStatus } : c
+        )
+      );
+    } catch (err) {
+      console.error('Error updating read status:', err);
+    }
+  };
+
   if (!isAuthorized) return null;
 
   return (
@@ -92,19 +109,41 @@ export default function AdminContactsPage() {
       ) : (
         <div className="space-y-4">
           {contacts.map((contact) => (
-            <div key={contact.id} className="border rounded-lg p-4 shadow-sm bg-white">
+            <div
+              key={contact.id}
+              className={`border rounded-lg p-4 shadow-sm bg-white relative ${
+                contact.read ? '' : 'border-blue-500 bg-blue-50'
+              }`}
+            >
+              {!contact.read && (
+                <span className="absolute top-2 right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                  New
+                </span>
+              )}
               <div className="flex justify-between items-start mb-2">
                 <div>
                   <h2 className="font-semibold text-lg">{contact.name}</h2>
                   <p className="text-sm text-gray-600">{contact.email}</p>
                   {contact.phone && <p className="text-sm text-gray-600">📞 {contact.phone}</p>}
                 </div>
-                <button
-                  onClick={() => handleDelete(contact.id)}
-                  className="text-red-600 hover:underline text-sm"
-                >
-                  ❌ Delete
-                </button>
+                <div className="space-x-2">
+                  <button
+                    onClick={() => toggleReadStatus(contact.id, contact.read)}
+                    className={`text-sm px-3 py-1 rounded font-medium ${
+                      contact.read
+                        ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                        : 'bg-green-200 text-green-800 hover:bg-green-300'
+                    }`}
+                  >
+                    {contact.read ? 'Mark Unread' : 'Mark Read'}
+                  </button>
+                  <button
+                    onClick={() => handleDelete(contact.id)}
+                    className="text-red-600 hover:underline text-sm"
+                  >
+                    ❌ Delete
+                  </button>
+                </div>
               </div>
               <p className="text-sm font-medium text-gray-700 mb-1">
                 <strong>Subject:</strong> {contact.subject || '—'}

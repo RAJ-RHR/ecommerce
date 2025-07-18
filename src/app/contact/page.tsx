@@ -39,10 +39,12 @@ export default function ContactPage() {
     }
 
     try {
-      await addDoc(collection(db, 'contacts'), {
-        ...form,
-        createdAt: Timestamp.now(),
-      });
+    await addDoc(collection(db, 'contacts'), {
+  ...form,
+  createdAt: Timestamp.now(),
+  read: false, // 🟡 Add default read field
+});
+
 
       setSuccess(true);
       setForm({ name: '', email: '', subject: '', message: '', phone: '' });
