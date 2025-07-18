@@ -1,5 +1,7 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/products/[slug]/page": "app/products/[slug]/page.js",
-  "/page": "app/page.js"
+  "/disclaimer/page": "app/disclaimer/page.js",
+  "/Terms/page": "app/Terms/page.js",
+  "/return/page": "app/return/page.js",
+  "/privacy-policy/page": "app/privacy-policy/page.js"
 }

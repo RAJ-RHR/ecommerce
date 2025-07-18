@@ -20,7 +20,7 @@ export default function Footer() {
           <p>Email: contact@herbolife.in</p>
         </div>
 
-        {/* WhatsApp & Policy */}
+        {/* WhatsApp & Policies */}
         <div className="text-center md:text-right space-y-3">
           <a
             href="https://wa.me/918603241934"
@@ -32,9 +32,18 @@ export default function Footer() {
             WhatsApp
           </a>
 
-          <div>
-            <Link href="/privacy-policy" className="text-gray-300 hover:text-white underline">
+          <div className="space-y-1">
+            <Link href="/privacy-policy" className="block text-gray-300 hover:text-white underline">
               Privacy Policy
+            </Link>
+            <Link href="/Terms" className="block text-gray-300 hover:text-white underline">
+              Terms & Conditions
+            </Link>
+            <Link href="/return" className="block text-gray-300 hover:text-white underline">
+              Return & Refund Policy
+            </Link>
+            <Link href="/disclaimer" className="block text-gray-300 hover:text-white underline">
+              Disclaimer
             </Link>
           </div>
         </div>
@@ -46,4 +55,3 @@ export default function Footer() {
     </footer>
   );
 }
-
