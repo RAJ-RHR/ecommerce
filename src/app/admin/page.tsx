@@ -72,7 +72,9 @@ export default function AdminHomePage() {
 
   return (
     <div className="mt-24 max-w-4xl mx-auto px-6 text-center">
+      
       <h1 className="text-3xl font-bold mb-10 text-gray-800">Admin Dashboard</h1>
+      
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Orders */}
@@ -122,6 +124,17 @@ export default function AdminHomePage() {
           )}
         </Link>
       </div>
+
+     <button
+  onClick={() => {
+    localStorage.removeItem('admin');
+    router.push('/admin/login');
+  }}
+  className="mt-10 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+>
+  Logout
+</button>
+
     </div>
   );
 }
