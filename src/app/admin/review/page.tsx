@@ -114,45 +114,68 @@ export default function ReviewModerationPage() {
 
   if (!isAuthorized) return null;
 
-  return (
-    <div className="mt-20 max-w-6xl mx-auto p-4">
-      <div className="mb-4 flex items-center gap-3">
+  return (<div className="mt-20 max-w-6xl mx-auto p-4">
+  <div className="mb-4 flex items-center gap-3">
+    <button
+      onClick={() => router.push('/admin')}
+      className="text-blue-600 text-sm"
+    >
+      ← Go to Home
+    </button>
+    <h2 className="text-2xl font-bold ml-2">📝 Review Moderation</h2>
+  </div>
+
+  {/* 🔄 Status Tabs with Count */}
+  <div className="flex gap-4 mb-4 border-b border-gray-200">
+    {['pending', 'approved', 'rejected'].map((status) => {
+      const count = reviews.filter((r) => r.status === status).length;
+      return (
         <button
-          onClick={() => router.push('/admin')}
-          className="text-blue-600 text-sm"
+          key={status}
+          onClick={() => setFilterStatus(status)}
+          className={`py-2 px-4 capitalize font-medium transition border-b-2 flex items-center gap-1 ${
+            filterStatus === status
+              ? 'border-green-600 text-green-600'
+              : 'border-transparent text-gray-500 hover:text-green-600'
+          }`}
         >
-          ← Go to Home
+          {status} <span className="text-xs bg-gray-100 px-2 py-0.5 rounded">{count}</span>
         </button>
-        <h2 className="text-2xl font-bold ml-2">📝 Review Moderation</h2>
-      </div>
+      );
+    })}
+  </div>
 
-      <div className="flex flex-wrap gap-3 mb-4 items-center">
-        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className="border p-2 rounded">
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
-        </select>
+  {/* 🔍 Filters */}
+  <div className="flex flex-wrap gap-3 mb-4 items-center">
+    <select
+      value={selectedCategory}
+      onChange={e => setSelectedCategory(e.target.value)}
+      className="border p-2 rounded"
+    >
+      <option value="">All Categories</option>
+      {CATEGORY_OPTIONS.map(cat => (
+        <option key={cat}>{cat}</option>
+      ))}
+    </select>
 
-        <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)} className="border p-2 rounded">
-          <option value="">All Categories</option>
-          {CATEGORY_OPTIONS.map(cat => (
-            <option key={cat}>{cat}</option>
-          ))}
-        </select>
+    <input
+      type="text"
+      placeholder="🔎 Search name/product"
+      value={searchTerm}
+      onChange={e => setSearchTerm(e.target.value)}
+      className="border p-2 rounded w-64"
+    />
 
-        <input
-          type="text"
-          placeholder="🔎 Search name/product"
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          className="border p-2 rounded w-64"
-        />
+    <select
+      value={sortBy}
+      onChange={e => setSortBy(e.target.value as any)}
+      className="border p-2 rounded"
+    >
+      <option value="date">Sort by Date</option>
+      <option value="rating">Sort by Rating</option>
+    </select>
+  </div>
 
-        <select value={sortBy} onChange={e => setSortBy(e.target.value as any)} className="border p-2 rounded">
-          <option value="date">Sort by Date</option>
-          <option value="rating">Sort by Rating</option>
-        </select>
-      </div>
 
       {/* Review Cards */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
