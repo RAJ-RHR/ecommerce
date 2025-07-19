@@ -27,7 +27,7 @@ export default function HomePage() {
   const [currentBanner, setCurrentBanner] = useState(0);
   const { cartItems, addToCart, increaseQty, decreaseQty } = useCart();
 
-  const banners = ['/images/banner1.jpg', '/images/banner2.jpg'];
+  const banners = ['/images/banner.jpg', '/images/bans.jpg'];
 
   useEffect(() => {
     const fetchProducts = async () => {
