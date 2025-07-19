@@ -200,14 +200,14 @@ export default function AddProductPage() {
           {editingId ? '✏️ Edit Product' : '➕ Add Product'}
         </h2>
         <div className="flex gap-3">
-          <Link href="/admin" className="bg-gray-700 text-white px-4 py-2 rounded hover:bg-gray-800">🏠 Home</Link>
-          <Link href="/admin/orders" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">📦 View Orders</Link>
+          <Link href="/admin" className="bg-gray-700 text-white px-2 py-2 rounded hover:bg-gray-800">🏠 Home</Link>
+          <Link href="/admin/orders" className="bg-blue-600 text-white px-2 py-2 rounded hover:bg-blue-700">📦 View Orders</Link>
           <button
             onClick={() => {
               localStorage.removeItem('admin');
               router.push('/admin/login');
             }}
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            className="bg-red-600 text-white px-2 py-2 rounded hover:bg-red-700"
           >
             🔓 Logout
           </button>

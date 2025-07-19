@@ -105,6 +105,7 @@ export default function AdminOrdersPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-10">
+      
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">📦 Admin Orders Panel</h1>
         <button
@@ -272,7 +273,7 @@ export default function AdminOrdersPage() {
 
       <Link
         href="/admin"
-        className="mt-10 inline-block text-blue-600 hover:underline"
+       className="bg-gray-700 text-white px-2 py-2 rounded hover:bg-gray-800"
       >
         ← Back to Home
       </Link>

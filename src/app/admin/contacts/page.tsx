@@ -103,9 +103,10 @@ export default function AdminContactsPage() {
   return (
     <div className="mt-24 max-w-5xl mx-auto p-6">
         <div className="mb-4 flex items-center gap-3">
+     
     <button
       onClick={() => router.push('/admin')}
-      className="text-blue-600 text-sm"
+   className="bg-gray-700 text-white px-2 py-2 rounded hover:bg-gray-800"
     >
       ← Go to Home
     </button>

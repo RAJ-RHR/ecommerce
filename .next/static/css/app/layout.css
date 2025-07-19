@@ -581,9 +581,6 @@ video {
 .hidden {
   display: none;
 }
-.aspect-\[16\/9\] {
-  aspect-ratio: 16/9;
-}
 .h-10 {
   height: 2.5rem;
 }
@@ -602,6 +599,9 @@ video {
 .h-5 {
   height: 1.25rem;
 }
+.h-56 {
+  height: 14rem;
+}
 .h-60 {
   height: 15rem;
 }
@@ -610,9 +610,6 @@ video {
 }
 .h-screen {
   height: 100vh;
-}
-.h-56 {
-  height: 14rem;
 }
 .max-h-72 {
   max-height: 18rem;
@@ -646,6 +643,9 @@ video {
 }
 .min-w-\[60px\] {
   min-width: 60px;
+}
+.max-w-2xl {
+  max-width: 42rem;
 }
 .max-w-3xl {
   max-width: 48rem;
@@ -747,9 +747,6 @@ video {
 .gap-1 {
   gap: 0.25rem;
 }
-.gap-10 {
-  gap: 2.5rem;
-}
 .gap-2 {
   gap: 0.5rem;
 }
@@ -807,6 +804,11 @@ video {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
   margin-bottom: calc(1.5rem * var(--tw-space-y-reverse));
+}
+.space-y-10 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(2.5rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(2.5rem * var(--tw-space-y-reverse));
 }
 .overflow-hidden {
   overflow: hidden;
