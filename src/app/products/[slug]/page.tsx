@@ -1,5 +1,6 @@
 'use client';
 
+
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/firebase';
 import {
@@ -18,16 +19,26 @@ import Script from 'next/script';
 import Head from 'next/head';
 import Link from 'next/link';
 
+
 type ProductWithSlug = Product & { slug: string };
 type Review = {
   id?: string;
   name: string;
   message: string;
   rating: number;
+  productId?: string;
+  productName?: string;
+  productCategory?: string;
   created_at?: any;
+dateOfSubmit?: { seconds: number } | Date | null;
+
+  status?: string;
 };
 
+
 export default function ProductPage() {
+  const [showAllReviews, setShowAllReviews] = useState(false);
+
   const { slug } = useParams();
   const [product, setProduct] = useState<ProductWithSlug | null>(null);
   const [related, setRelated] = useState<ProductWithSlug[]>([]);
@@ -128,19 +139,42 @@ export default function ProductPage() {
       setCategoryShowcase(Array.from(categoryMap.values()));
     };
 
-    const fetchReviews = async (productId: string) => {
-      const q = query(
-        collection(db, 'reviews'),
-        where('productId', '==', productId),
-        where('status', '==', 'approved')
-      );
-      const snapshot = await getDocs(q);
-      const fetchedReviews = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Review[];
-      setReviews(fetchedReviews);
-    };
+   const fetchReviews = async (productId: string) => {
+  const q = query(
+    collection(db, 'reviews'),
+    where('productId', '==', productId),
+    where('status', '==', 'approved')
+  );
+  const snapshot = await getDocs(q);
+  const fetchedReviews = snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name,
+      message: data.message,
+      rating: data.rating,
+      productId: data.productId,
+      productName: data.productName,
+      productCategory: data.productCategory,
+      status: data.status,
+      created_at: data.created_at,
+     dateOfSubmit:
+  data.dateOfSubmit && 'seconds' in data.dateOfSubmit
+    ? new Date(data.dateOfSubmit.seconds * 1000)
+    : data.dateOfSubmit instanceof Date
+    ? data.dateOfSubmit
+    : null,
 
-    fetchProduct();
-    fetchCategories();
+    };
+  }) as Review[];
+
+  setReviews(fetchedReviews);
+};
+
+// inside useEffect
+fetchProduct();
+fetchCategories();
+
   }, [slug]);
 
   const handleReviewSubmit = async () => {
@@ -151,6 +185,7 @@ export default function ProductPage() {
   productId: product.id,
   productName: product.name, // ✅ Add this line
    productCategory: product.category, // ✅ Add category here
+     dateOfSubmit: new Date(), // Add this line
   status: 'pending',
 };
     
@@ -306,42 +341,64 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* ⭐ REVIEWS SECTION */}
-        <section className="mt-10 border-t border-gray-300 pt-6">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+      {/* ⭐ REVIEWS SECTION */}
+<section className="mt-10 border-t border-gray-300 pt-6">
+  <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+  {reviews.length > 0 ? (
+    <>
+     <div className="grid gap-4">
+  {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
+    
+    const date =
+      review.dateOfSubmit instanceof Date
+        ? review.dateOfSubmit
+        : review.dateOfSubmit?.seconds
+        ? new Date(review.dateOfSubmit.seconds * 1000)
+        : null;
 
-          {reviews.length > 0 && (
-            <div className="flex items-center gap-2 mb-4">
-              <div className="text-yellow-500 text-lg">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <span key={index}>{index < Math.round(averageRating) ? '★' : '☆'}</span>
-                ))}
-              </div>
-              <p className="text-gray-600 text-sm">
-                {averageRating.toFixed(1)} out of 5 from {reviews.length} review{reviews.length > 1 ? 's' : ''}
-              </p>
-            </div>
-          )}
+    const formattedDate = date
+      ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+          .toString()
+          .padStart(2, '0')}/${date.getFullYear()}`
+      : 'N/A';
 
-          {reviews.length > 0 ? (
-            <div className="grid gap-4">
-              {reviews.map((review) => (
-                <div key={review.id} className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-semibold text-gray-800">{review.name}</p>
-                    <div className="text-yellow-500 text-sm">
-                      {Array.from({ length: 5 }).map((_, index) => (
-                        <span key={index}>{index < review.rating ? '★' : '☆'}</span>
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-gray-700 text-sm">{review.message}</p>
+
+          return (
+            <div
+              key={review.id}
+              className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-semibold text-gray-800">
+                  {review.name}{' '}
+                  <span className="text-sm text-gray-500 font-normal">{formattedDate}</span>
+                </p>
+                <div className="text-yellow-500 text-sm">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <span key={index}>{index < review.rating ? '★' : '☆'}</span>
+                  ))}
                 </div>
-              ))}
+              </div>
+              <p className="text-gray-700 text-sm">{review.message}</p>
             </div>
-          ) : (
-            <p className="text-sm text-gray-500">No reviews yet.</p>
-          )}
+          );
+        })}
+      </div>
+
+      {reviews.length > 3 && (
+        <button
+          onClick={() => setShowAllReviews(!showAllReviews)}
+          className="mt-4 text-blue-600 hover:underline text-sm"
+        >
+          {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
+        </button>
+      )}
+    </>
+  ) : (
+    <p className="text-sm text-gray-500">No reviews yet.</p>
+  )}
+
+
 
           {/* ⭐ REVIEW FORM */}
           <div className="mt-10">

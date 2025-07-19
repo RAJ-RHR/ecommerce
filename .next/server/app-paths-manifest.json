@@ -1,7 +1,3 @@
 {
-  "/products/[slug]/page": "app/products/[slug]/page.js",
-  "/disclaimer/page": "app/disclaimer/page.js",
-  "/Terms/page": "app/Terms/page.js",
-  "/return/page": "app/return/page.js",
-  "/privacy-policy/page": "app/privacy-policy/page.js"
+  "/admin/review/page": "app/admin/review/page.js"
 }
