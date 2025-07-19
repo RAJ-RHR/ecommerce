@@ -21,7 +21,7 @@ export default function ReturnRefundPolicyPage() {
         <h2 className="text-xl font-semibold mt-6 mb-2">Return Process</h2>
         <p className="mb-4">
           To initiate a return, contact our customer care at <strong>support@herbolife.in</strong> or call us at{' '}
-          <strong>0124-4507500</strong>. You will receive a Return Request Number. Please ensure this number is
+          <strong>+918603241934</strong>. You will receive a Return Request Number. Please ensure this number is
           mentioned in all return-related communication.
         </p>
         <ul className="list-disc list-inside mb-4 space-y-1">
@@ -33,14 +33,14 @@ export default function ReturnRefundPolicyPage() {
         <h2 className="text-xl font-semibold mt-6 mb-2">Return Address</h2>
         <p className="mb-4 whitespace-pre-line">
           Herbolife{'\n'}
-          219, Udyog Vihar Phase 4{'\n'}
+    
           Gurgaon, Haryana - 122002
         </p>
 
         <h2 className="text-xl font-semibold mt-6 mb-2">Refund Terms</h2>
         <p className="mb-4">
           Upon receiving and verifying the returned product, the refund will be processed within{' '}
-          <strong>45 working days</strong>. Shipping charges are non-refundable, and return shipping costs must be borne
+          <strong>75 working days</strong>. Shipping charges are non-refundable, and return shipping costs must be borne
           by the customer.
         </p>
 

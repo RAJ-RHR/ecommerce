@@ -7,6 +7,7 @@ import { collection, getDocs, query, orderBy } from 'firebase/firestore';
 import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 
+
 type Product = {
   id: string;
   slug: string;
