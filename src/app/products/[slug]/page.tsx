@@ -432,7 +432,7 @@ fetchCategories();
 
             <button
               onClick={handleReviewSubmit}
-              className="bg-blue-600 text-white px-4 py-1 rounded"
+              className="bg-green-600 text-white px-4 py-1 rounded"
             >
               Submit Review
             </button>

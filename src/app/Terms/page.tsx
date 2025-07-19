@@ -80,7 +80,7 @@ export default function TermsAndConditionsPage() {
         <h2 className="text-xl font-semibold mt-6 mb-2">9. Contact Us</h2>
         <p>
           For any queries or concerns regarding these Terms & Conditions, please email us at:{' '}
-          <a href="mailto:support@herbolife.in" className="text-green-600 underline">
+          <a href="herbolifeco@gmail.com" className="text-green-600 underline">
             support@herbolife.in
           </a>
         </p>
