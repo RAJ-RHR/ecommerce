@@ -18,7 +18,7 @@ type Product = {
   category: string;
   label?: string;
   description?: string;
- slug: string; // <-- make this required
+  slug: string;
 };
 
 export default function HomePage() {
@@ -149,73 +149,71 @@ export default function HomePage() {
 
   return (
     <>
-     <Head>
-  <title>Herbo life | Herbal Health & Wellness Store</title>
-  <meta name="description" content="Shop authentic ayurvedic health and wellness products at best prices. High quality, original, and effective herbal solutions - Herbo life." />
-  <meta name="keywords" content="Herbo life, ayurvedic, herbal, wellness, organic, health, supplements, immunity, natural,sexual wellness,Power Plus, Weight loss, Female health , men's health" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://store.herbolife.in/" />
-  
-  <meta property="og:title" content="Herbo life | Herbal Health & Wellness Store" />
-  <meta property="og:description" content="Original and effective ayurvedic products delivered fast. 100% genuine, high-quality wellness essentials from Herbo life." />
-  <meta property="og:image" content="https://store.herbolife.in/images/banner1.jpg" />
-  <meta property="og:url" content="https://store.herbolife.in/" />
-  <meta property="og:type" content="website" />
-  
-  <meta name="twitter:card" content="summary_large_image" />
-</Head>
-<div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
-  {banners.map((src, index) => (
-    <Image
-      key={index}
-      src={src}
-      alt={`Banner ${index}`}
-      fill // IMPORTANT: makes image fill the parent div
-      className={`object-contain transition-opacity duration-1000 ${
-        index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0'
-      }`}
-    />
-  ))}
-</div>
+      <Head>
+        <title>Herbolife | Herbal Health & Wellness Store</title>
+        <meta name="description" content="Shop authentic ayurvedic health and wellness products at best prices. High quality, original, and effective herbal solutions – Herbolife." />
+        <meta name="keywords" content="Herbolife, ayurvedic, herbal, wellness, organic, health, supplements, immunity, natural, sexual wellness, Power Plus, Weight loss, Female health, Men's health" />
+        <meta name="robots" content="index, follow" />
+        <link rel="canonical" href="https://store.herbolife.in/" />
 
-      {/* Features Section */}
+        <meta property="og:title" content="Herbolife | Herbal Health & Wellness Store" />
+        <meta property="og:description" content="Original and effective ayurvedic products delivered fast. 100% genuine, high-quality wellness essentials from Herbolife." />
+        <meta property="og:image" content="https://store.herbolife.in/images/banner1.jpg" />
+        <meta property="og:url" content="https://store.herbolife.in/" />
+        <meta property="og:type" content="website" />
+
+        <meta name="twitter:card" content="summary_large_image" />
+
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Herbolife",
+              url: "https://store.herbolife.in",
+              logo: "https://store.herbolife.in/images/logo.png",
+              sameAs: [
+                "https://www.facebook.com/herbolifestore",
+                "https://www.instagram.com/herbolifestore"
+              ]
+            }),
+          }}
+        />
+      </Head>
+
+      <div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
+        {banners.map((src, index) => (
+          <Image
+            key={index}
+            src={src}
+            alt={`Banner ${index}`}
+            fill
+            className={`object-contain transition-opacity duration-1000 ${
+              index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0'
+            }`}
+          />
+        ))}
+      </div>
+
+      {/* Features */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-y-6 px-4 md:px-16 text-center py-6 border-b bg-white my-12">
-        <div>
-          <FaCheckCircle size={36} className="text-green-600 mx-auto mb-2" />
-          <p className="font-semibold text-sm md:text-base">100% Genuine Products</p>
-        </div>
-        <div>
-          <FaLeaf size={36} className="text-green-600 mx-auto mb-2" />
-          <p className="font-semibold text-sm md:text-base">Natural Ingredients</p>
-        </div>
-        <div>
-          <FaTruck size={36} className="text-green-600 mx-auto mb-2" />
-          <p className="font-semibold text-sm md:text-base">Fast Delivery</p>
-        </div>
-        <div>
-          <FaUndo size={36} className="text-green-600 mx-auto mb-2" />
-          <p className="font-semibold text-sm md:text-base">Easy Returns</p>
-        </div>
+        <div><FaCheckCircle size={36} className="text-green-600 mx-auto mb-2" /><p className="font-semibold text-sm md:text-base">100% Genuine Products</p></div>
+        <div><FaLeaf size={36} className="text-green-600 mx-auto mb-2" /><p className="font-semibold text-sm md:text-base">Natural Ingredients</p></div>
+        <div><FaTruck size={36} className="text-green-600 mx-auto mb-2" /><p className="font-semibold text-sm md:text-base">Fast Delivery</p></div>
+        <div><FaUndo size={36} className="text-green-600 mx-auto mb-2" /><p className="font-semibold text-sm md:text-base">Easy Returns</p></div>
       </section>
 
       {/* Shop by Category */}
       <section className="px-4 md:px-8 mb-6">
-        <h2 className="text-2xl font-bold mb-4">
-          SHOP BY <span className="text-green-600">CATEGORY</span>
-        </h2>
+        <h2 className="text-2xl font-bold mb-4">SHOP BY <span className="text-green-600">CATEGORY</span></h2>
         <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar px-1">
           {randomCategoryProducts.map(({ category, product }) => (
-            <div
-              key={category}
-              className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
-            >
+            <div key={category} className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300">
               <Link href={`/category/${category}`}>
                 <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    className="w-full h-32 object-contain"
-                  />
+                  <img src={product.image} alt={product.name} className="w-full h-32 object-contain" />
                 </div>
                 <h3 className="font-semibold text-sm text-center">{category}</h3>
               </Link>
@@ -226,9 +224,7 @@ export default function HomePage() {
 
       {/* Latest Products */}
       <section className="bg-gray-50 px-4 md:px-8 py-6 mt-0">
-        <h2 className="text-2xl font-bold mb-6">
-          LATEST <span className="text-green-600">PRODUCTS</span>
-        </h2>
+        <h2 className="text-2xl font-bold mb-6">LATEST <span className="text-green-600">PRODUCTS</span></h2>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {products.map(renderProductCard)}
         </div>
