@@ -581,6 +581,9 @@ video {
 .hidden {
   display: none;
 }
+.aspect-\[16\/9\] {
+  aspect-ratio: 16/9;
+}
 .h-10 {
   height: 2.5rem;
 }
@@ -599,20 +602,17 @@ video {
 .h-5 {
   height: 1.25rem;
 }
-.h-56 {
-  height: 14rem;
-}
 .h-60 {
   height: 15rem;
 }
 .h-96 {
   height: 24rem;
 }
-.h-full {
-  height: 100%;
-}
 .h-screen {
   height: 100vh;
+}
+.h-56 {
+  height: 14rem;
 }
 .max-h-72 {
   max-height: 18rem;

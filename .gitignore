@@ -1,7 +1,4 @@
-# Build output
-.next/
-out/
-dist/
+
 
 # Node modules
 node_modules/

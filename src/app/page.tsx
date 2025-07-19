@@ -164,22 +164,19 @@ export default function HomePage() {
   
   <meta name="twitter:card" content="summary_large_image" />
 </Head>
-
-      {/* Banner Section */}
-      <div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
-        {banners.map((src, index) => (
-          <Image
-            key={index}
-            src={src}
-            alt={`Banner ${index}`}
-            width={1200}
-            height={300}
-            className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${
-              index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0'
-            }`}
-          />
-        ))}
-      </div>
+<div className="px-4 md:px-8 my-12 relative w-full h-56 md:h-72 rounded-lg overflow-hidden">
+  {banners.map((src, index) => (
+    <Image
+      key={index}
+      src={src}
+      alt={`Banner ${index}`}
+      fill // IMPORTANT: makes image fill the parent div
+      className={`object-contain transition-opacity duration-1000 ${
+        index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0'
+      }`}
+    />
+  ))}
+</div>
 
       {/* Features Section */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-y-6 px-4 md:px-16 text-center py-6 border-b bg-white my-12">
