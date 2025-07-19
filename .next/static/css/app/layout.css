@@ -617,9 +617,6 @@ video {
 .max-h-72 {
   max-height: 18rem;
 }
-.min-h-screen {
-  min-height: 100vh;
-}
 .w-10 {
   width: 2.5rem;
 }
