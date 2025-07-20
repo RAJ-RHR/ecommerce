@@ -1,5 +1,6 @@
 import '@/app/globals.css';
 import ClientWrapper from './ClientWrapper';
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata = {
   title: 'Herbolife Store',
