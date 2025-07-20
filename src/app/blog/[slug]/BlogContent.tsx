@@ -6,7 +6,6 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc,
   onSnapshot,
   collection,
   query,
@@ -17,31 +16,35 @@ import {
 import ReactMarkdown from 'react-markdown';
 import Image from 'next/image';
 import Link from 'next/link';
+import { FaFacebook, FaWhatsapp, FaThumbsUp } from 'react-icons/fa';
 
-import { FaFacebook, FaWhatsapp } from 'react-icons/fa';
+// ✅ Local user ID
+const getLocalUserId = () => {
+  if (typeof window === 'undefined') return 'guest';
+  let uid = localStorage.getItem('herbolife_user_id');
+  if (!uid) {
+    uid = 'user_' + Math.random().toString(36).substring(2, 10);
+    localStorage.setItem('herbolife_user_id', uid);
+  }
+  return uid;
+};
 
 export default function BlogContent({ blog }: { blog: any }) {
+  const localUserId = getLocalUserId();
   const shareUrl = `https://store.herbolife.in/blog/${blog.slug}`;
-  const blogTitle = blog?.title || "Check this blog";
-  const [likes, setLikes] = useState<number>(0);
+  const blogTitle = blog?.title || 'Check this blog';
+  const blogSlug = blog.slug;
+
+  const [likes, setLikes] = useState(0);
   const [liked, setLiked] = useState(false);
+  const [dislikes, setDislikes] = useState(0);
+  const [disliked, setDisliked] = useState(false);
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
   const [commentName, setCommentName] = useState('');
   const [showCount, setShowCount] = useState(5);
   const [product, setProduct] = useState<any>(null);
   const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
-
-  const blogSlug = blog.slug;
-  const localUserId =
-    typeof window !== 'undefined'
-      ? localStorage.getItem('herbolife_user_id') ||
-        (() => {
-          const uid = 'user_' + Math.random().toString(36).substring(2, 10);
-          localStorage.setItem('herbolife_user_id', uid);
-          return uid;
-        })()
-      : 'guest';
 
   const createdAt = blog.createdAt
     ? new Date(blog.createdAt.seconds * 1000).toLocaleDateString('en-IN', {
@@ -57,11 +60,15 @@ export default function BlogContent({ blog }: { blog: any }) {
       if (snap.exists()) {
         const data = snap.data();
         const likesObj = data.likes || {};
+        const dislikesObj = data.dislikes || {};
+
         setLikes(Object.keys(likesObj).length);
         setLiked(!!likesObj[localUserId]);
+        setDislikes(Object.keys(dislikesObj).length);
+        setDisliked(!!dislikesObj[localUserId]);
         setComments(data.comments || []);
       } else {
-        setDoc(blogRef, { likes: {}, comments: [] });
+        setDoc(blogRef, { likes: {}, dislikes: {}, comments: [] });
       }
     });
 
@@ -75,59 +82,65 @@ export default function BlogContent({ blog }: { blog: any }) {
     const fetchRelated = async () => {
       const q = query(collection(db, 'blogs'));
       const snap = await getDocs(q);
-      const list = snap.docs
-        .map((d) => d.data())
-        .filter((b: any) => b.slug !== blogSlug);
-      const blogDataRefs = await Promise.all(
+      const list = snap.docs.map((d) => d.data()).filter((b) => b.slug !== blogSlug);
+      const dataRefs = await Promise.all(
         list.map((b) => getDoc(doc(db, 'blog_data', b.slug)))
       );
       const enriched = list.map((b, i) => ({
         ...b,
-        ...(blogDataRefs[i].exists() ? blogDataRefs[i].data() : {}),
+        ...(dataRefs[i].exists() ? dataRefs[i].data() : {}),
       }));
       setRelatedBlogs(enriched);
     };
 
     fetchProduct();
     fetchRelated();
-
     return () => unsub();
-  }, [blogSlug]);
+  }, [blogSlug, localUserId]);
 
   const handleLike = async () => {
-  const ref = doc(db, 'blog_data', blogSlug);
-  const snap = await getDoc(ref);
-  const existing = snap.exists() ? snap.data() : {};
+    const ref = doc(db, 'blog_data', blogSlug);
+    const snap = await getDoc(ref);
+    const existing = snap.exists() ? snap.data() : {};
+    let likesObj = existing.likes || {};
+    let dislikesObj = existing.dislikes || {};
 
-  const localUserId = `user_${localStorage.getItem('localId') || crypto.randomUUID()}`;
+    if (likesObj[localUserId]) {
+      delete likesObj[localUserId];
+    } else {
+      likesObj[localUserId] = true;
+      delete dislikesObj[localUserId]; // remove dislike if liked
+    }
 
-  let likesObj = existing.likes;
+    await setDoc(ref, { likes: likesObj, dislikes: dislikesObj }, { merge: true });
 
-  // If likes is a number, convert to object
-  if (typeof likesObj === 'number') {
-    likesObj = {}; // reset or migrate
-  }
+    setLiked(!!likesObj[localUserId]);
+    setDisliked(!!dislikesObj[localUserId]);
+    setLikes(Object.keys(likesObj).length);
+    setDislikes(Object.keys(dislikesObj).length);
+  };
 
-  // If likes is undefined, start fresh
-  if (!likesObj || typeof likesObj !== 'object') {
-    likesObj = {};
-  }
+  const handleDislike = async () => {
+    const ref = doc(db, 'blog_data', blogSlug);
+    const snap = await getDoc(ref);
+    const existing = snap.exists() ? snap.data() : {};
+    let dislikesObj = existing.dislikes || {};
+    let likesObj = existing.likes || {};
 
-  if (likesObj[localUserId]) {
-    delete likesObj[localUserId];
-  } else {
-    likesObj[localUserId] = true;
-  }
+    if (dislikesObj[localUserId]) {
+      delete dislikesObj[localUserId];
+    } else {
+      dislikesObj[localUserId] = true;
+      delete likesObj[localUserId]; // remove like if disliked
+    }
 
-  await setDoc(ref, {
-    ...existing,
-    likes: likesObj,
-  }, { merge: true });
+    await setDoc(ref, { dislikes: dislikesObj, likes: likesObj }, { merge: true });
 
-  setLiked(!!likesObj[localUserId]);
-  setLikes(Object.keys(likesObj).length);
-};
-
+    setDisliked(!!dislikesObj[localUserId]);
+    setLiked(!!likesObj[localUserId]);
+    setDislikes(Object.keys(dislikesObj).length);
+    setLikes(Object.keys(likesObj).length);
+  };
 
   const handleComment = async () => {
     if (!newComment.trim() || !commentName.trim()) return alert('Enter name and comment');
@@ -143,8 +156,8 @@ export default function BlogContent({ blog }: { blog: any }) {
     const snap = await getDoc(ref);
     const existing = snap.exists() ? snap.data() : { likes: {}, comments: [] };
     const updated = [commentData, ...(existing.comments || [])].slice(0, 10);
-    await setDoc(ref, { ...existing, comments: updated }, { merge: true });
 
+    await setDoc(ref, { ...existing, comments: updated }, { merge: true });
     setNewComment('');
   };
 
@@ -164,18 +177,18 @@ export default function BlogContent({ blog }: { blog: any }) {
         By: <strong>Herbolife</strong> | {blog.product} in {blog.category} | {createdAt}
       </p>
 
-      {blog.cover && (
+      {blog.coverImage && (
         <div className="mb-6 flex justify-center">
-          <Image src={blog.cover} alt="cover" width={800} height={400} className="rounded-md" />
+          <Image src={blog.coverImage} alt="cover" width={400} height={200} className="rounded-md" />
         </div>
       )}
 
-      <div className="md:col-span-2 mt-6 text-gray-700 text-sm whitespace-pre-line leading-relaxed">
+      <div className="text-sm text-gray-700 mt-6 leading-relaxed whitespace-pre-line">
         <ReactMarkdown>{blog.content}</ReactMarkdown>
       </div>
 
       {product && (
-        <div className="flex gap-4 p-4 bg-gray-50 rounded-md mb-6 items-center">
+        <div className="flex gap-4 p-4 bg-gray-50 rounded-md mb-6 mt-4 items-center">
           <Image
             src={product.image}
             alt={product.name}
@@ -200,7 +213,35 @@ export default function BlogContent({ blog }: { blog: any }) {
         </div>
       )}
 
-      <div className="flex gap-4 mt-4">
+      {/* Likes, Dislikes, Share */}
+<div className="flex items-center justify-between mb-4 mt-4">
+  {/* Left Side: Like & Dislike */}
+  <div className="flex gap-2">
+    <button
+      onClick={handleLike}
+      onDoubleClick={(e) => e.preventDefault()}
+      className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
+        liked ? 'bg-blue-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
+      }`}
+    >
+      <FaThumbsUp className="mr-2" />
+      {likes}
+    </button>
+
+    <button
+      onClick={handleDislike}
+      onDoubleClick={(e) => e.preventDefault()}
+      className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
+        disliked ? 'bg-red-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
+      }`}
+    >
+      <FaThumbsUp className="mr-2 rotate-180" />
+      {dislikes}
+    </button>
+  </div>
+
+  {/* Right Side: Share Buttons */}
+  <div className="flex gap-2">
     <a
       href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
       target="_blank"
@@ -208,7 +249,7 @@ export default function BlogContent({ blog }: { blog: any }) {
       className="flex items-center px-3 py-1 rounded-md bg-blue-600 text-white"
     >
       <FaFacebook className="mr-2" />
-      Share on Facebook
+      Share
     </a>
 
     <a
@@ -218,11 +259,14 @@ export default function BlogContent({ blog }: { blog: any }) {
       className="flex items-center px-3 py-1 rounded-md bg-green-500 text-white"
     >
       <FaWhatsapp className="mr-2" />
-      Share on WhatsApp
+      Share
     </a>
   </div>
+</div>
 
-      <div className="mb-6">
+
+      {/* Comments */}
+      <div className="mb-6 mt-4">
         <input
           type="text"
           value={commentName}
@@ -237,10 +281,7 @@ export default function BlogContent({ blog }: { blog: any }) {
           placeholder="Write a comment..."
           className="w-full border p-2 rounded mb-2"
         />
-        <button
-          onClick={handleComment}
-          className="bg-blue-600 text-white px-4 py-1 rounded"
-        >
+        <button onClick={handleComment} className="bg-blue-600 text-white px-4 py-1 rounded">
           Post Comment
         </button>
 
@@ -266,6 +307,7 @@ export default function BlogContent({ blog }: { blog: any }) {
         )}
       </div>
 
+      {/* Related Blogs */}
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-4">Related Blogs</h2>
         <div className="flex overflow-x-auto gap-4 pb-2">
@@ -285,10 +327,11 @@ export default function BlogContent({ blog }: { blog: any }) {
                 />
               )}
               <h3 className="font-semibold text-sm line-clamp-2">{b.title}</h3>
-                  <p className="text-xs text-gray-700 mt-1 line-clamp-2">{b.category}</p>
+              <p className="text-xs text-gray-700 mt-1 line-clamp-2">{b.category}</p>
               <p className="text-xs text-gray-600 mt-1 line-clamp-2">{b.content}</p>
               <div className="mt-2 flex gap-4 text-xs text-gray-500">
                 <span>👍 {b.likes ? Object.keys(b.likes).length : 0}</span>
+                <span>👎 {b.dislikes ? Object.keys(b.dislikes).length : 0}</span>
                 <span>💬 {b.comments?.length || 0}</span>
               </div>
             </Link>
