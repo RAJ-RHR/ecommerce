@@ -285,6 +285,7 @@ export default function BlogContent({ blog }: { blog: any }) {
                 />
               )}
               <h3 className="font-semibold text-sm line-clamp-2">{b.title}</h3>
+                  <p className="text-xs text-gray-700 mt-1 line-clamp-2">{b.category}</p>
               <p className="text-xs text-gray-600 mt-1 line-clamp-2">{b.content}</p>
               <div className="mt-2 flex gap-4 text-xs text-gray-500">
                 <span>👍 {b.likes ? Object.keys(b.likes).length : 0}</span>

@@ -7,11 +7,18 @@ export default function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-8 px-4 mt-8">
       <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 text-sm">
-        {/* About */}
-        <div className="text-center md:text-left">
-          <h3 className="font-bold text-base mb-2">About Us</h3>
-          <p>We provide top quality health and wellness products to transform your life.</p>
-        </div>
+     <div className="text-center md:text-left space-y-2">
+  <div>
+    <h3 className="font-bold text-base mb-1">About Us</h3>
+    <p>We provide top quality health and wellness products to transform your life. 100% Ayurvedic @Herbolife</p>
+  </div>
+  <Link
+    href="/blog"
+    className="text-green-400 hover:underline inline-block text-sm font-medium"
+  >
+    → Latest Blogs
+  </Link>
+</div>
 
         {/* Contact & Address */}
         <div className="text-center">
