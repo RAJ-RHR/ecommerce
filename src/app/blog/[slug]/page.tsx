@@ -1,37 +1,25 @@
+import { Metadata } from 'next';
+import { query, collection, where, getDocs } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { notFound } from 'next/navigation';
+import BlogContent from './BlogContent';
 
-interface Blog {
-  title: string;
-  content: string;
-  image?: string;
-  category?: string;
-  createdAt?: any;
-}
-
-export default async function BlogSlugPage({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const q = query(collection(db, 'blogs'), where('slug', '==', params.slug));
   const snapshot = await getDocs(q);
+  const blog = snapshot.docs[0]?.data();
 
-  if (snapshot.empty) return notFound();
+  return {
+    title: blog?.title || 'Blog',
+    description: blog?.metaDesc || '',
+  };
+}
 
-  const blog = snapshot.docs[0].data() as Blog;
+export default async function BlogPage({ params }: { params: { slug: string } }) {
+  const q = query(collection(db, 'blogs'), where('slug', '==', params.slug));
+  const snapshot = await getDocs(q);
+  const blog = snapshot.docs[0]?.data();
 
-  return (
-    <div className="max-w-3xl mx-auto py-12 px-4">
-      <h1 className="text-4xl font-bold mb-4">{blog.title}</h1>
-      {blog.category && (
-        <p className="text-sm text-gray-500 mb-2">Category: {blog.category}</p>
-      )}
-      {blog.image && (
-        <img
-          src={blog.image}
-          alt={blog.title}
-          className="w-full h-64 object-cover rounded-lg mb-6"
-        />
-      )}
-      <div className="prose prose-lg max-w-none">{blog.content}</div>
-    </div>
-  );
+  if (!blog) return <div>Not Found</div>;
+
+  return <BlogContent blog={blog} />;
 }
