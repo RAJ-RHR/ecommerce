@@ -128,7 +128,11 @@ export default function BlogPage() {
                 <span>{blog.createdAt}</span>
                 <span>{calculateReadingTime(blog.content)}</span>
               </div>
-              <p className="mt-2 text-gray-700 line-clamp-3">{blog.content}</p>
+            <p className="mt-2 text-gray-700 line-clamp-3">
+  {blog.content.slice(0, 150)}...{' '}
+  <span className="text-green-600 font-medium">Read more &gt;</span>
+</p>
+
 
               {/* Tags */}
               {blog.tags.length > 0 && (
