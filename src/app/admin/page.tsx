@@ -27,7 +27,7 @@ export default function AdminHomePage() {
           localStorage.removeItem('admin');
           alert('Session expired due to inactivity.');
           router.push('/admin/login');
-        }, 5 * 60 * 1000);
+        }, 2 * 60 * 1000);
       };
 
       const events = ['mousemove', 'keydown', 'click', 'scroll'];
@@ -116,13 +116,21 @@ export default function AdminHomePage() {
           href="/admin/review"
           className="relative bg-purple-600 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-purple-700 transition duration-300 text-lg font-medium flex justify-between items-center"
         >
-          Moderate Reviews <span className="text-xl">→</span>
+          Check Reviews <span className="text-xl">→</span>
           {pendingReviews > 0 && (
             <span className="absolute top-2 right-2 bg-white text-purple-700 font-bold text-xs px-2 py-0.5 rounded-full">
               {pendingReviews}
             </span>
           )}
         </Link>
+        {/* Blogs */}
+<Link
+  href="/admin/blog"
+  className="bg-pink-600 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-pink-700 transition duration-300 text-lg font-medium flex justify-between items-center"
+>
+  Manage Blogs <span className="text-xl">→</span>
+</Link>
+
       </div>
 
      <button

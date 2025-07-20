@@ -178,7 +178,7 @@ const publishedDate = blog.publishedDate
   const shownComments = showAllComments ? comments : comments.slice(0, 2);
 
   return (
-    <div className="bg-white text-black mt-4 p-4 max-w-3xl mx-auto">
+    <div className="bg-white text-black mt-6 p-4 max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold text-center mt - 6 mb-2">{blog.title}</h1>
       <p className="text-center text-sm text-gray-500 mb-4">
         By: <strong>Herbolife</strong> | {blog.product} in {blog.category}  | Published: {publishedDate}

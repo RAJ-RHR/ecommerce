@@ -38,7 +38,13 @@ export default function BlogPage() {
             title: data.title,
             content: data.content,
             image: data.coverImage || '',
-            createdAt: data.createdAt?.toDate()?.toDateString() || 'No date',
+        publishedDate: data.publishedDate
+        ? new Date(data.publishedDate).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })
+        : 'No date',
             tags: data.tags || [],
             category: data.category || '',
           };
@@ -125,7 +131,7 @@ export default function BlogPage() {
               )}
               <h2 className="text-xl font-semibold mt-4 line-clamp-2">{blog.title}</h2>
               <div className="text-sm text-gray-600 flex justify-between mt-1">
-                <span>{blog.createdAt}</span>
+                <span>{blog.publishedDate}</span>
                 <span>{calculateReadingTime(blog.content)}</span>
               </div>
             <p className="mt-2 text-gray-700 line-clamp-3">

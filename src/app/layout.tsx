@@ -1,11 +1,11 @@
 import '@/app/globals.css';
 import ClientWrapper from './ClientWrapper';
-import { Analytics } from "@vercel/analytics/next";
+import { Analytics } from "@vercel/analytics/react"; // ✅ Note: use `/react`, not `/next`
 
 export const metadata = {
   title: 'Herbolife Store',
   description:
-    'Buy original Ayurvedic products at best prices. High-quality herbal supplements for wellness, immunity,male enhacement, weight loss, and more – only at Herbo life Store.',
+    'Buy original Ayurvedic products at best prices. High-quality herbal supplements for wellness, immunity, male enhancement, weight loss, and more – only at Herbo life Store.',
   icons: {
     icon: '/favicon.png',
     shortcut: '/favicon.png',
@@ -23,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body>
         <ClientWrapper>{children}</ClientWrapper>
+        <Analytics /> {/* ✅ Vercel Analytics injected here */}
       </body>
     </html>
   );
