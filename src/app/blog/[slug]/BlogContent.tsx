@@ -42,7 +42,7 @@ export default function BlogContent({ blog }: { blog: any }) {
   const [comments, setComments] = useState<any[]>([]);
   const [newComment, setNewComment] = useState('');
   const [commentName, setCommentName] = useState('');
-  const [showCount, setShowCount] = useState(5);
+  const [showAllComments, setShowAllComments] = useState(false);
   const [product, setProduct] = useState<any>(null);
   const [relatedBlogs, setRelatedBlogs] = useState<any[]>([]);
 
@@ -109,7 +109,7 @@ export default function BlogContent({ blog }: { blog: any }) {
       delete likesObj[localUserId];
     } else {
       likesObj[localUserId] = true;
-      delete dislikesObj[localUserId]; // remove dislike if liked
+      delete dislikesObj[localUserId];
     }
 
     await setDoc(ref, { likes: likesObj, dislikes: dislikesObj }, { merge: true });
@@ -131,7 +131,7 @@ export default function BlogContent({ blog }: { blog: any }) {
       delete dislikesObj[localUserId];
     } else {
       dislikesObj[localUserId] = true;
-      delete likesObj[localUserId]; // remove like if disliked
+      delete likesObj[localUserId];
     }
 
     await setDoc(ref, { dislikes: dislikesObj, likes: likesObj }, { merge: true });
@@ -168,11 +168,11 @@ export default function BlogContent({ blog }: { blog: any }) {
     return `${Math.round(((p - o) / p) * 100)}% OFF`;
   };
 
-  const shownComments = comments.slice(0, showCount);
+  const shownComments = showAllComments ? comments : comments.slice(0, 2);
 
   return (
     <div className="bg-white text-black p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mb-2">{blog.title}</h1>
+      <h1 className="text-3xl font-bold text-center mt -4 mb-2">{blog.title}</h1>
       <p className="text-center text-sm text-gray-500 mb-4">
         By: <strong>Herbolife</strong> | {blog.product} in {blog.category} | {createdAt}
       </p>
@@ -214,56 +214,53 @@ export default function BlogContent({ blog }: { blog: any }) {
       )}
 
       {/* Likes, Dislikes, Share */}
-<div className="flex items-center justify-between mb-4 mt-4">
-  {/* Left Side: Like & Dislike */}
-  <div className="flex gap-2">
-    <button
-      onClick={handleLike}
-      onDoubleClick={(e) => e.preventDefault()}
-      className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
-        liked ? 'bg-blue-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
-      }`}
-    >
-      <FaThumbsUp className="mr-2" />
-      {likes}
-    </button>
+      <div className="flex items-center justify-between mb-4 mt-4">
+        <div className="flex gap-2">
+          <button
+            onClick={handleLike}
+            onDoubleClick={(e) => e.preventDefault()}
+            className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
+              liked ? 'bg-blue-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            <FaThumbsUp className="mr-2" />
+            {likes}
+          </button>
 
-    <button
-      onClick={handleDislike}
-      onDoubleClick={(e) => e.preventDefault()}
-      className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
-        disliked ? 'bg-red-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
-      }`}
-    >
-      <FaThumbsUp className="mr-2 rotate-180" />
-      {dislikes}
-    </button>
-  </div>
+          <button
+            onClick={handleDislike}
+            onDoubleClick={(e) => e.preventDefault()}
+            className={`flex items-center px-3 py-1 rounded-md transition-transform duration-200 ${
+              disliked ? 'bg-red-600 text-white scale-110' : 'bg-gray-200 text-gray-700'
+            }`}
+          >
+            <FaThumbsUp className="mr-2 rotate-180" />
+            {dislikes}
+          </button>
+        </div>
 
-  {/* Right Side: Share Buttons */}
-  <div className="flex gap-2">
-    <a
-      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center px-3 py-1 rounded-md bg-blue-600 text-white"
-    >
-      <FaFacebook className="mr-2" />
-      Share
-    </a>
+        <div className="flex gap-2">
+          <a
+            href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center px-3 py-1 rounded-md bg-blue-600 text-white"
+          >
+            <FaFacebook className="mr-2" />
+            Share
+          </a>
 
-    <a
-      href={`https://wa.me/?text=${encodeURIComponent(blogTitle + ' ' + shareUrl)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="flex items-center px-3 py-1 rounded-md bg-green-500 text-white"
-    >
-      <FaWhatsapp className="mr-2" />
-      Share
-    </a>
-  </div>
-</div>
-
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(blogTitle + ' ' + shareUrl)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center px-3 py-1 rounded-md bg-green-500 text-white"
+          >
+            <FaWhatsapp className="mr-2" />
+            Share
+          </a>
+        </div>
+      </div>
 
       {/* Comments */}
       <div className="mb-6 mt-4">
@@ -297,12 +294,12 @@ export default function BlogContent({ blog }: { blog: any }) {
           </div>
         ))}
 
-        {comments.length > showCount && (
+        {comments.length > 2 && (
           <button
-            onClick={() => setShowCount(showCount + 5)}
-            className="mt-2 text-blue-600 underline"
+            onClick={() => setShowAllComments(!showAllComments)}
+            className="mt-2 text-green-600 underline"
           >
-            Show more comments
+            {showAllComments ? 'Show less comments' : 'Show more comments'}
           </button>
         )}
       </div>

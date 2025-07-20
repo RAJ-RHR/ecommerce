@@ -7,9 +7,12 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const snapshot = await getDocs(q);
   const blog = snapshot.docs[0]?.data();
 
+  const plainContent = blog?.content?.replace(/<[^>]*>/g, ''); // strip HTML tags
+  const shortDesc = plainContent?.slice(0, 160); // limit to 160 chars
+
   return {
-    title: blog?.title || 'Blog',
-    description: blog?.metaDesc || '',
+    title: blog?.title ? `${blog.title} - Blog` : 'Blog',
+    description: shortDesc || '',
   };
 }
 import BlogContent from './BlogContent';
