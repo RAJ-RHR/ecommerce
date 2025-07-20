@@ -53,6 +53,13 @@ export default function BlogContent({ blog }: { blog: any }) {
         year: 'numeric',
       })
     : '';
+const publishedDate = blog.publishedDate
+  ? new Date(blog.publishedDate).toLocaleDateString('en-IN', {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+    })
+  : '';
 
   useEffect(() => {
     const blogRef = doc(db, 'blog_data', blogSlug);
@@ -171,10 +178,10 @@ export default function BlogContent({ blog }: { blog: any }) {
   const shownComments = showAllComments ? comments : comments.slice(0, 2);
 
   return (
-    <div className="bg-white text-black p-4 max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold text-center mt -4 mb-2">{blog.title}</h1>
+    <div className="bg-white text-black mt-4 p-4 max-w-3xl mx-auto">
+      <h1 className="text-3xl font-bold text-center mt - 6 mb-2">{blog.title}</h1>
       <p className="text-center text-sm text-gray-500 mb-4">
-        By: <strong>Herbolife</strong> | {blog.product} in {blog.category} | {createdAt}
+        By: <strong>Herbolife</strong> | {blog.product} in {blog.category}  | Published: {publishedDate}
       </p>
 
       {blog.coverImage && (
@@ -303,38 +310,40 @@ export default function BlogContent({ blog }: { blog: any }) {
           </button>
         )}
       </div>
-
-      {/* Related Blogs */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Related Blogs</h2>
-        <div className="flex overflow-x-auto gap-4 pb-2">
-          {relatedBlogs.map((b) => (
-            <Link
-              href={`/blog/${b.slug}`}
-              key={b.slug}
-              className="min-w-[80%] sm:min-w-[200px] max-w-xs bg-gray-50 rounded shadow-sm p-3 flex-shrink-0"
-            >
-              {b.coverImage && (
-                <Image
-                  src={b.coverImage}
-                  alt={b.title}
-                  width={280}
-                  height={160}
-                  className="rounded mb-2 object-cover w-full h-40"
-                />
-              )}
-              <h3 className="font-semibold text-sm line-clamp-2">{b.title}</h3>
-              <p className="text-xs text-gray-700 mt-1 line-clamp-2">{b.category}</p>
-              <p className="text-xs text-gray-600 mt-1 line-clamp-2">{b.content}</p>
-              <div className="mt-2 flex gap-4 text-xs text-gray-500">
-                <span>👍 {b.likes ? Object.keys(b.likes).length : 0}</span>
-                <span>👎 {b.dislikes ? Object.keys(b.dislikes).length : 0}</span>
-                <span>💬 {b.comments?.length || 0}</span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
+{/* Related Blogs */}
+<div className="mt-10">
+  <h2 className="text-xl font-semibold mb-4">Related Blogs</h2>
+  <div className="overflow-x-auto">
+    <div className="grid grid-flow-col auto-cols-[80%] sm:auto-cols-[45%] lg:auto-cols-[30%] gap-4 pb-2">
+      {relatedBlogs.map((b) => (
+        <Link
+          href={`/blog/${b.slug}`}
+          key={b.slug}
+          className="bg-gray-50 rounded shadow-sm p-3 flex-shrink-0"
+        >
+          {b.coverImage && (
+            <Image
+              src={b.coverImage}
+              alt={b.title}
+              width={280}
+              height={160}
+              className="rounded mb-2 object-cover w-full h-40"
+            />
+          )}
+          <h3 className="font-semibold text-sm line-clamp-2">{b.title}</h3>
+          <p className="text-xs text-gray-700 mt-1 line-clamp-2">{b.category}</p>
+          <p className="text-xs text-gray-600 mt-1 line-clamp-2">{b.content}</p>
+          <div className="mt-2 flex gap-4 text-xs text-gray-500">
+            <span>👍 {b.likes ? Object.keys(b.likes).length : 0}</span>
+            <span>👎 {b.dislikes ? Object.keys(b.dislikes).length : 0}</span>
+            <span>💬 {b.comments?.length || 0}</span>
+          </div>
+        </Link>
+      ))}
+    </div>
+  </div>
+</div>
     </div>
   );
 }
+` `

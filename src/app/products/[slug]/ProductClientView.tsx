@@ -254,34 +254,36 @@ fetchCategories();
         <meta name="twitter:card" content="summary_large_image" />
       </Head>
 
-      <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
-        {JSON.stringify({
-          '@context': 'https://schema.org/',
-          '@type': 'Product',
-          name: product.name,
-          image: [product.image],
-          description: description,
-          sku: product.id,
-          brand: {
-            '@type': 'Brand',
-            name: 'Herbolife',
-          },
-          aggregateRating: {
-            '@type': 'AggregateRating',
-            ratingValue: averageRating.toFixed(1),
-            reviewCount: reviews.length,
-          },
-          offers: {
-            '@type': 'Offer',
-            url: canonicalUrl,
-            priceCurrency: 'INR',
-            price: product.offer_price,
-            priceValidUntil: '2025-12-31',
-            itemCondition: 'https://schema.org/NewCondition',
-            availability: 'https://schema.org/InStock',
-          },
-        })}
-      </Script>
+   {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
+  <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
+    {JSON.stringify({
+      '@context': 'https://schema.org/',
+      '@type': 'Product',
+      name: product.name,
+      image: [product.image],
+      description: description,
+      sku: product.id,
+      brand: {
+        '@type': 'Brand',
+        name: 'Herbolife',
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: averageRating.toFixed(1),
+        reviewCount: reviews.length,
+      },
+      offers: {
+        '@type': 'Offer',
+        url: canonicalUrl,
+        priceCurrency: 'INR',
+        price: product.offer_price,
+        priceValidUntil: '2025-12-31',
+        itemCondition: 'https://schema.org/NewCondition',
+        availability: 'https://schema.org/InStock',
+      },
+    })}
+  </Script>
+)}
 
       <div className="mt-20 px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">

@@ -21,6 +21,8 @@ export default function AdminBlogPage() {
   const [categories, setCategories] = useState<string[]>([]);
   const [selectedProduct, setSelectedProduct] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [title, setTitle] = useState('');
+  const [publishedDate, setPublishedDate] = useState('');
   const [blogContent, setBlogContent] = useState('');
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [coverImageUrl, setCoverImageUrl] = useState('');
@@ -43,70 +45,75 @@ export default function AdminBlogPage() {
 
   const fetchBlogs = async () => {
     const snap = await getDocs(collection(db, 'blogs'));
-    setBlogs(snap.docs.map((doc) => ({ id: doc.id, ...doc.data() })));
+    setBlogs(
+      snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+    );
   };
 
-  // Slug generator utility
-const generateSlug = (text: string) => {
-  return text
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9 -]/g, '') // remove invalid chars
-    .replace(/\s+/g, '-') // collapse whitespace and replace by -
-    .replace(/-+/g, '-'); // collapse dashes
-};
-
-const handleImageUpload = async (): Promise<string> => {
-  if (!coverImage) return coverImageUrl || '';
-  setUploading(true);
-  try {
-    const url = await uploadImageToCloudinary(coverImage);
-    setUploading(false);
-    setCoverImageUrl(url);
-    return url;
-  } catch (error) {
-    setUploading(false);
-    setMessage('❌ Failed to upload image');
-    return '';
-  }
-};
-
-const handleSaveBlog = async () => {
-  if (!blogContent) return setMessage('❌ Blog content is empty');
-  const imageUrl = await handleImageUpload();
-
-  const title = selectedProduct || selectedCategory || 'Untitled Blog';
-  const slug = generateSlug(title);
-
-  const blogData = {
-    title,
-    product: selectedProduct || null,
-    category: selectedCategory || null,
-    content: blogContent,
-    coverImage: imageUrl,
-    updatedAt: serverTimestamp(),
-    slug, // ✅ Add the generated slug
+  const generateSlug = (text: string) => {
+    return text
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9 -]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
   };
 
-  if (editingBlogId) {
-    await updateDoc(doc(db, 'blogs', editingBlogId), blogData);
-    setMessage('✅ Blog updated!');
-  } else {
-    await addDoc(collection(db, 'blogs'), {
-      ...blogData,
-      createdAt: serverTimestamp(),
-    });
-    setMessage('✅ Blog saved!');
-  }
+  const handleImageUpload = async (): Promise<string> => {
+    if (!coverImage) return coverImageUrl || '';
+    setUploading(true);
+    try {
+      const url = await uploadImageToCloudinary(coverImage);
+      setUploading(false);
+      setCoverImageUrl(url);
+      return url;
+    } catch (error) {
+      setUploading(false);
+      setMessage('❌ Failed to upload image');
+      return '';
+    }
+  };
 
-  resetForm();
-  fetchBlogs();
-};
+  const handleSaveBlog = async () => {
+    if (!blogContent) return setMessage('❌ Blog content is empty');
+    if (!publishedDate) return setMessage('❌ Published date is required');
+    const imageUrl = await handleImageUpload();
+    const slug = generateSlug(title || selectedProduct || 'Untitled Blog');
 
+    const blogData = {
+      title: title || selectedProduct || 'Untitled Blog',
+      product: selectedProduct || null,
+      category: selectedCategory || null,
+      content: blogContent,
+      coverImage: imageUrl,
+      publishedDate,
+      updatedAt: serverTimestamp(),
+      slug,
+    };
+
+    if (editingBlogId) {
+      await updateDoc(doc(db, 'blogs', editingBlogId), blogData);
+      setMessage('✅ Blog updated!');
+    } else {
+      await addDoc(collection(db, 'blogs'), {
+        ...blogData,
+        createdAt: serverTimestamp(),
+      });
+      setMessage('✅ Blog saved!');
+    }
+
+    resetForm();
+    fetchBlogs();
+  };
 
   const resetForm = () => {
     setSelectedProduct('');
     setSelectedCategory('');
+    setTitle('');
+    setPublishedDate('');
     setBlogContent('');
     setCoverImage(null);
     setCoverImageUrl('');
@@ -116,6 +123,8 @@ const handleSaveBlog = async () => {
   const handleEdit = (blog: any) => {
     setSelectedProduct(blog.product || '');
     setSelectedCategory(blog.category || '');
+    setTitle(blog.title || '');
+    setPublishedDate(blog.publishedDate || '');
     setBlogContent(blog.content || '');
     setCoverImageUrl(blog.coverImage || '');
     setEditingBlogId(blog.id);
@@ -159,7 +168,6 @@ const handleSaveBlog = async () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6">
-      {/* Tabs */}
       <div className="flex mb-6 border-b">
         {['generate', 'view'].map((key) => (
           <button
@@ -185,6 +193,7 @@ const handleSaveBlog = async () => {
             value={selectedProduct}
             onChange={(e) => {
               setSelectedProduct(e.target.value);
+              setTitle(e.target.value); // Autofill title
               setSelectedCategory('');
             }}
           >
@@ -209,6 +218,23 @@ const handleSaveBlog = async () => {
               </option>
             ))}
           </select>
+
+          <label className="block mb-1 font-medium">Blog Title</label>
+          <input
+            type="text"
+            className="w-full p-2 border rounded mb-4"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            placeholder="Enter blog title"
+          />
+
+          <label className="block mb-1 font-medium">Published Date</label>
+          <input
+            type="date"
+            className="w-full p-2 border rounded mb-4"
+            value={publishedDate}
+            onChange={(e) => setPublishedDate(e.target.value)}
+          />
 
           <div className="bg-gray-100 p-3 rounded mb-4 text-sm text-gray-700">
             <strong>GPT Prompt:</strong>
@@ -278,8 +304,15 @@ const handleSaveBlog = async () => {
                 </div>
               </div>
               {blog.coverImage && (
-                <Image src={blog.coverImage} alt="cover" width={300} height={200} className="rounded my-2" />
+                <Image
+                  src={blog.coverImage}
+                  alt="cover"
+                  width={300}
+                  height={200}
+                  className="rounded my-2"
+                />
               )}
+              <p className="text-sm text-gray-600">📅 Published: {blog.publishedDate || 'N/A'}</p>
               <p className="text-sm text-gray-600">
                 Product: {blog.product || 'N/A'} | Category: {blog.category || 'N/A'}
               </p>
