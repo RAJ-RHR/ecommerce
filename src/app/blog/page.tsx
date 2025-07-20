@@ -66,7 +66,7 @@ export default function BlogPage() {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4 text-center">Our Latest Blogs</h1>
+      <h1 className="text-3xl font-bold mb-4 mt-4 text-center">Our Latest Blogs</h1>
 
       {/* Category Filter */}
       {categories.length > 0 && (
