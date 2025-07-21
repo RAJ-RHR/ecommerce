@@ -1,19 +1,17 @@
 /** @type {import('next-sitemap').IConfig} */
+const path = require('path');
+
 module.exports = {
-  siteUrl: 'https://herbolife.in',                     // ✅ Use herbolife.in
+  siteUrl: 'https://herbolife.in',
   generateRobotsTxt: true,
-  generateIndexSitemap: true,
+  generateIndexSitemap: false, // prevent default sitemap.xml
   changefreq: 'daily',
   priority: 0.7,
   sitemapSize: 5000,
-  exclude: [
-    '/admin',
-    '/admin/*',
-    '/api/*',
-  ],
+  outDir: './public',
+  exclude: ['/admin', '/admin/*', '/api/*'],
   transform: async (config, path) => {
     if (/\.(xml|json)$/.test(path)) return null;
-
     return {
       loc: path,
       changefreq: config.changefreq,
@@ -30,7 +28,7 @@ module.exports = {
       },
     ],
     additionalSitemaps: [
-      'https://herbolife.in/main-server-sitemap.xml',  // ✅ Firestore-based sitemap for herbolife.in
+      'https://herbolife.in/main-server-sitemap.xml'
     ],
   },
 };

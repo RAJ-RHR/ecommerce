@@ -1,0 +1,14 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/*
+Disallow: /api
+Disallow: /api/*
+
+# Host
+Host: https://herbolife.in
+
+# Sitemaps
+Sitemap: https://herbolife.in/sitemap.xml
+Sitemap: https://herbolife.in/main-server-sitemap.xml
