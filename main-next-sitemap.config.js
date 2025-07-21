@@ -8,7 +8,7 @@ module.exports = {
   changefreq: 'daily',
   priority: 0.7,
   sitemapSize: 5000,
-  outDir: './public/main',     // ✅ Output sitemap.xml & sitemap-0.xml to /public/main
+  outDir: './public/mains',     // ✅ Output sitemap.xml & sitemap-0.xml to /public/main
   exclude: ['/admin', '/admin/*', '/api/*'],
   transform: async (config, path) => {
     if (/\.(xml|json)$/.test(path)) return null;
