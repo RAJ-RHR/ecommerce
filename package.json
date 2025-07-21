@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "postbuild": "next-sitemap"
+    "postbuild": "npm run generate-store-sitemap && npm run generate-main-sitemap",
+    "generate-store-sitemap": "next-sitemap --config next-sitemap.config.js",
+    "generate-main-sitemap": "next-sitemap --config main-next-sitemap.config.js"
   },
   "dependencies": {
     "@vercel/analytics": "^1.5.0",
