@@ -5,11 +5,6 @@ const sitemaps = [
   'https://store.herbolife.in/server-sitemap.xml',
 ];
 
-const engines = {
-  google: 'https://www.google.com/ping?sitemap=',
-  bing: 'https://www.bing.com/ping?sitemap=',
-};
-
 function waitForSitemap(url, retries = 10, delay = 5000) {
   return new Promise((resolve, reject) => {
     const attempt = (count) => {
@@ -20,6 +15,9 @@ function waitForSitemap(url, retries = 10, delay = 5000) {
         } else if (res.statusCode === 404) {
           console.warn(`❌ Sitemap returned 404: ${url}`);
           reject(new Error('Sitemap not found (404)'));
+        } else if (res.statusCode === 410) {
+          console.warn(`🚫 Sitemap gone (410): ${url}`);
+          reject(new Error('Sitemap no longer exists (410)'));
         } else {
           if (count < retries) {
             console.log(`⏳ Waiting for sitemap (${count}/${retries}) [${res.statusCode}]: ${url}`);
@@ -42,24 +40,16 @@ function waitForSitemap(url, retries = 10, delay = 5000) {
   });
 }
 
-function pingSitemapToEngines(sitemap) {
-  Object.entries(engines).forEach(([name, base]) => {
-    const url = `${base}${encodeURIComponent(sitemap)}`;
-    https.get(url, (res) => {
-      console.log(`[${name.toUpperCase()}] Pinged ${sitemap} – Status: ${res.statusCode}`);
-    }).on('error', (err) => {
-      console.error(`[${name.toUpperCase()}] Error pinging ${sitemap}: ${err.message}`);
-    });
-  });
-}
-
+// Main execution: Only wait for sitemaps, skip pinging
 (async () => {
   for (const sitemap of sitemaps) {
     try {
       await waitForSitemap(sitemap);
-      pingSitemapToEngines(sitemap);
     } catch (err) {
-      console.error(`🚫 Skipping ping for ${sitemap} – ${err.message}`);
+      console.error(`🚫 Skipping sitemap: ${sitemap} – ${err.message}`);
     }
   }
+
+  console.log('✅ Skipped pinging. Sitemap status check complete.');
+  process.exit(0); // ✅ Ensure Node exits
 })();
