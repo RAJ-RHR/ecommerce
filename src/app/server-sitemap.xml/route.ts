@@ -20,10 +20,12 @@ export async function GET() {
       lastmod: new Date().toISOString(),
     }));
 
-    const categoryUrls = categorySnap.docs.map((doc) => ({
-      loc: `https://store.herbolife.in/category/${doc.id}`,
-      lastmod: new Date().toISOString(),
-    }));
+    const categoryUrls = categorySnap.docs
+      .filter((doc) => !!doc.id)
+      .map((doc) => ({
+        loc: `https://store.herbolife.in/category/${encodeURIComponent(doc.id)}`,
+        lastmod: new Date().toISOString(),
+      }));
 
     const allUrls = [...blogUrls, ...productUrls, ...categoryUrls];
 
