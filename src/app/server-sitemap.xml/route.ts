@@ -22,18 +22,20 @@ export async function GET() {
         lastmod: new Date().toISOString(),
       }));
 
-    const categoryUrls = categorySnap.docs
-      .filter((doc) => !!doc.id)
-      .map((doc) => ({
-        loc: `https://store.herbolife.in/category/${encodeURIComponent(doc.id)}`,
+    const categoryUrls = categorySnap.docs.map((doc) => {
+      const data = doc.data();
+      const slug = data.slug || doc.id;
+      return {
+        loc: `https://store.herbolife.in/category/${encodeURIComponent(slug)}`,
         lastmod: new Date().toISOString(),
-      }));
+      };
+    });
 
     const allUrls = [...blogUrls, ...productUrls, ...categoryUrls];
 
     return getServerSideSitemap(allUrls);
   } catch (error) {
-    console.error('Sitemap generation error:', error);
+    console.error('❌ Sitemap generation error:', error);
     return new Response('Error generating sitemap', { status: 500 });
   }
 }
