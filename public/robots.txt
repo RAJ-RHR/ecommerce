@@ -9,3 +9,4 @@ Host: https://store.herbolife.in
 
 # Sitemaps
 Sitemap: https://store.herbolife.in/sitemap.xml
+Sitemap: https://store.herbolife.in/server-sitemap.xml
