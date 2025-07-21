@@ -4,10 +4,9 @@ import { db } from '@/lib/firebase';
 
 export async function GET() {
   try {
-    const [blogSnap, productSnap, categorySnap] = await Promise.all([
+    const [blogSnap, productSnap] = await Promise.all([
       getDocs(collection(db, 'blog_data')),
       getDocs(collection(db, 'products')),
-      getDocs(collection(db, 'categories')),
     ]);
 
     const blogUrls = blogSnap.docs.map((doc) => ({
@@ -22,14 +21,17 @@ export async function GET() {
         lastmod: new Date().toISOString(),
       }));
 
-    const categoryUrls = categorySnap.docs.map((doc) => {
-      const data = doc.data();
-      const slug = data.slug || doc.id;
-      return {
-        loc: `https://store.herbolife.in/category/${encodeURIComponent(slug)}`,
-        lastmod: new Date().toISOString(),
-      };
+    // Extract unique category names from products
+    const categorySet = new Set<string>();
+    productSnap.docs.forEach((doc) => {
+      const category = doc.data().category;
+      if (category) categorySet.add(category);
     });
+
+    const categoryUrls = Array.from(categorySet).map((category) => ({
+      loc: `https://store.herbolife.in/category/${encodeURIComponent(category)}`,
+      lastmod: new Date().toISOString(),
+    }));
 
     const allUrls = [...blogUrls, ...productUrls, ...categoryUrls];
 
