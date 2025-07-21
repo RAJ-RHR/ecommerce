@@ -49,6 +49,8 @@ export default function AdminBlogPage() {
     fetchData();
   }, []);
 
+const [editingSlug, setEditingSlug] = useState('');
+
   const fetchBlogs = async () => {
     const snap = await getDocs(collection(db, 'blogs'));
     setBlogs(
@@ -83,60 +85,67 @@ export default function AdminBlogPage() {
     }
   };
 
-  const handleSaveBlog = async () => {
-    if (!blogContent) return setMessage('❌ Blog content is empty');
-    if (!publishedDate) return setMessage('❌ Published date is required');
-    const imageUrl = await handleImageUpload();
-    const slug = generateSlug(title || selectedProduct || 'Untitled Blog');
+ const handleSaveBlog = async () => {
+  if (!blogContent) return setMessage('❌ Blog content is empty');
+  if (!publishedDate) return setMessage('❌ Published date is required');
 
-    const blogData = {
-      title: title || selectedProduct || 'Untitled Blog',
-      product: selectedProduct || null,
-      category: selectedCategory || null,
-      content: blogContent,
-      coverImage: imageUrl,
-      publishedDate,
-      updatedAt: serverTimestamp(),
-      slug,
-    };
+  const imageUrl = await handleImageUpload();
 
-    if (editingBlogId) {
-      await updateDoc(doc(db, 'blogs', editingBlogId), blogData);
-      setMessage('✅ Blog updated!');
-    } else {
-      await addDoc(collection(db, 'blogs'), {
-        ...blogData,
-        createdAt: serverTimestamp(),
-      });
-      setMessage('✅ Blog saved!');
-    }
+  // ✅ Use original slug if editing
+  const slug = editingSlug || generateSlug(title || selectedProduct || 'Untitled Blog');
 
-    resetForm();
-    fetchBlogs();
+  const blogData = {
+    title: title || selectedProduct || 'Untitled Blog',
+    product: selectedProduct || null,
+    category: selectedCategory || null,
+    content: blogContent,
+    coverImage: imageUrl,
+    publishedDate,
+    updatedAt: serverTimestamp(),
+    slug,
   };
 
-  const resetForm = () => {
-    setSelectedProduct('');
-    setSelectedCategory('');
-    setTitle('');
-    setPublishedDate('');
-    setBlogContent('');
-    setCoverImage(null);
-    setCoverImageUrl('');
-    setEditingBlogId('');
-  };
+  if (editingBlogId) {
+    await updateDoc(doc(db, 'blogs', editingBlogId), blogData);
+    setMessage('✅ Blog updated!');
+  } else {
+    await addDoc(collection(db, 'blogs'), {
+      ...blogData,
+      createdAt: serverTimestamp(),
+    });
+    setMessage('✅ Blog saved!');
+  }
 
-  const handleEdit = (blog: any) => {
-    setSelectedProduct(blog.product || '');
-    setSelectedCategory(blog.category || '');
-    setTitle(blog.title || '');
-    setPublishedDate(blog.publishedDate || '');
-    setBlogContent(blog.content || '');
-    setCoverImageUrl(blog.coverImage || '');
-    setEditingBlogId(blog.id);
-    setTab('generate');
-    setMessage('✏️ Editing blog...');
-  };
+  resetForm();
+  fetchBlogs();
+};
+
+
+ const resetForm = () => {
+  setSelectedProduct('');
+  setSelectedCategory('');
+  setTitle('');
+  setPublishedDate('');
+  setBlogContent('');
+  setCoverImage(null);
+  setCoverImageUrl('');
+  setEditingBlogId('');
+  setEditingSlug(''); // ✅ Clear editing slug
+};
+
+const handleEdit = (blog: any) => {
+  setSelectedProduct(blog.product || '');
+  setSelectedCategory(blog.category || '');
+  setTitle(blog.title || '');
+  setPublishedDate(blog.publishedDate || '');
+  setBlogContent(blog.content || '');
+  setCoverImageUrl(blog.coverImage || '');
+  setEditingBlogId(blog.id);
+  setEditingSlug(blog.slug); // ✅ Preserve original slug
+  setTab('generate');
+  setMessage('✏️ Editing blog...');
+};
+
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this blog?')) {
