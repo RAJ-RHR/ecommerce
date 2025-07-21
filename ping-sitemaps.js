@@ -17,17 +17,20 @@ function waitForSitemap(url, retries = 10, delay = 5000) {
         if (res.statusCode === 200) {
           console.log(`✅ Sitemap ready: ${url}`);
           resolve();
+        } else if (res.statusCode === 404) {
+          console.warn(`❌ Sitemap returned 404: ${url}`);
+          reject(new Error('Sitemap not found (404)'));
         } else {
           if (count < retries) {
-            console.log(`⏳ Waiting for sitemap (${count}/${retries}): ${url}`);
+            console.log(`⏳ Waiting for sitemap (${count}/${retries}) [${res.statusCode}]: ${url}`);
             setTimeout(() => attempt(count + 1), delay);
           } else {
-            reject(new Error(`❌ Sitemap not available: ${url}`));
+            reject(new Error(`Sitemap failed after ${retries} attempts (Status: ${res.statusCode})`));
           }
         }
       }).on('error', (err) => {
         if (count < retries) {
-          console.log(`⏳ Retry due to error (${count}/${retries}): ${url}`);
+          console.log(`⏳ Retry on error (${count}/${retries}): ${url}`);
           setTimeout(() => attempt(count + 1), delay);
         } else {
           reject(err);
@@ -56,7 +59,7 @@ function pingSitemapToEngines(sitemap) {
       await waitForSitemap(sitemap);
       pingSitemapToEngines(sitemap);
     } catch (err) {
-      console.error(`❌ Skipping ping due to error: ${err.message}`);
+      console.error(`🚫 Skipping ping for ${sitemap} – ${err.message}`);
     }
   }
 })();
