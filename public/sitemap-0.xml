@@ -1,20 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://store.herbolife.in/Terms</loc><lastmod>2025-07-21T08:40:16.230Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/contacts</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/orders</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/product</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/review</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/login</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/admin/blog</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/checkout</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/contact</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/cart</loc><lastmod>2025-07-21T08:40:16.232Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/disclaimer</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/shop</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/return</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/thank-you</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/privacy-policy</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://store.herbolife.in/blog</loc><lastmod>2025-07-21T08:40:16.233Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/Terms</loc><lastmod>2025-07-21T09:05:19.683Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/cart</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/checkout</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/contact</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/disclaimer</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/privacy-policy</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/return</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/shop</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/thank-you</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://store.herbolife.in/blog</loc><lastmod>2025-07-21T09:05:19.684Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>
