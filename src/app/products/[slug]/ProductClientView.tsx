@@ -20,7 +20,12 @@ import Head from 'next/head';
 import Link from 'next/link';
 
 
-type ProductWithSlug = Product & { slug: string };
+type ProductWithSlug = Product & {
+  slug: string;
+  meta_description?: string;
+  meta_keywords?: string;
+};
+
 type Review = {
   id?: string;
   name: string;
@@ -71,17 +76,20 @@ export default function ProductPage() {
         const docSnap = snapshot.docs[0];
         const data = docSnap.data();
 
-        const fetchedProduct: ProductWithSlug = {
-          id: docSnap.id,
-          name: data.name,
-          image: data.image,
-          category: data.category,
-          label: data.label,
-          description: data.description || 'Ayurvedic Product',
-          price: Number(data.price),
-          offer_price: Number(data.offer_price),
-          slug: data.slug,
-        };
+      const fetchedProduct: ProductWithSlug = {
+  id: docSnap.id,
+  name: data.name,
+  image: data.image,
+  category: data.category,
+  label: data.label,
+  description: data.description || 'Ayurvedic Product',
+  price: Number(data.price),
+  offer_price: Number(data.offer_price),
+  slug: data.slug,
+  meta_description: data.meta_description || '',  // ✅
+  meta_keywords: data.meta_keywords || '',        // ✅
+};
+
 
         setProduct(fetchedProduct);
         setAvailability(data.availability || '');
@@ -240,19 +248,20 @@ fetchCategories();
 
   return (
     <>
-      <Head>
-        <title>{title}</title>
-        <meta name="description" content={description} />
-        <link rel="canonical" href={canonicalUrl} />
-        <meta name="keywords" content={`${product.name}, Herbolife, herbal, wellness`} />
-        <meta name="robots" content="index, follow" />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
-        <meta property="og:image" content={product.image} />
-        <meta property="og:type" content="product" />
-        <meta property="og:url" content={canonicalUrl} />
-        <meta name="twitter:card" content="summary_large_image" />
-      </Head>
+     <Head>
+  <title>{title}</title>
+  <meta name="description" content={product.meta_description || description} />
+  <meta name="keywords" content={product.meta_keywords || `${product.name}, Herbolife, herbal, wellness`} />
+  <link rel="canonical" href={canonicalUrl} />
+  <meta name="robots" content="index, follow" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={product.meta_description || description} />
+  <meta property="og:image" content={product.image} />
+  <meta property="og:type" content="product" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta name="twitter:card" content="summary_large_image" />
+</Head>
+
 
    {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
   <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">

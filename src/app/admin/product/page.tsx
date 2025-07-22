@@ -55,15 +55,18 @@ export default function AddProductPage() {
   const router = useRouter();
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [form, setForm] = useState({
-    name: '',
-    price: '',
-    offer_price: '',
-    category: '',
-    label: '',
-    description: '',
-    image: null as File | null,
-    availability: 'In Stock',
-  });
+  name: '',
+  price: '',
+  offer_price: '',
+  category: '',
+  label: '',
+  description: '',
+  image: null as File | null,
+  availability: 'In Stock',
+  meta_description: '',
+  meta_keywords: ''
+});
+
   const [preview, setPreview] = useState<string | null>(null);
   const [products, setProducts] = useState<DocumentData[]>([]);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -134,23 +137,26 @@ export default function AddProductPage() {
     setLoading(true);
     let imageUrl = form.image ? await uploadToCloudinary(form.image) : null;
     const slug = await generateUniqueSlug(generateSlug(form.name), editingId);
-    const productData = {
-      name: form.name,
-      price: form.price,
-      offer_price: form.offer_price,
-      category: form.category,
-      label: form.label,
-      description: form.description,
-      availability: form.availability,
-      slug,
-      ...(imageUrl && { image: imageUrl })
-    };
+  const productData = {
+  name: form.name,
+  price: form.price,
+  offer_price: form.offer_price,
+  category: form.category,
+  label: form.label,
+  description: form.description,
+  availability: form.availability,
+  slug,
+  meta_description: form.meta_description,
+  meta_keywords: form.meta_keywords,
+  ...(imageUrl && { image: imageUrl })
+};
+
     if (editingId) {
       await updateDoc(doc(db, 'products', editingId), productData);
     } else {
       await addDoc(collection(db, 'products'), { ...productData, image: imageUrl, createdAt: serverTimestamp() });
     }
-    setForm({ name: '', price: '', offer_price: '', category: '', label: '', description: '', image: null, availability: 'In Stock' });
+    setForm({ name: '', price: '', offer_price: '', category: '', label: '', description: '', image: null, availability: 'In Stock', meta_description: '', meta_keywords: '' });
     setPreview(null);
     setEditingId(null);
     setLoading(false);
@@ -160,19 +166,22 @@ export default function AddProductPage() {
   };
 
   const handleEdit = (product: DocumentData) => {
-    setForm({
-      name: product.name,
-      price: product.price,
-      offer_price: product.offer_price,
-      category: product.category || '',
-      label: product.label || '',
-      description: product.description || '',
-      image: null,
-      availability: product.availability || 'In Stock'
-    });
-    setPreview(product.image);
+  setForm({
+  name: product.name,
+  price: product.price,
+  offer_price: product.offer_price,
+  category: product.category || '',
+  label: product.label || '',
+  description: product.description || '',
+  image: null,
+  availability: product.availability || 'In Stock',
+  meta_description: product.meta_description || '',
+  meta_keywords: product.meta_keywords || ''
+});
+ setPreview(product.image || null);
     setEditingId(product.id);
   };
+
 
   const handleDelete = async (id: string) => {
     if (confirm('Delete product?')) {
@@ -243,6 +252,23 @@ export default function AddProductPage() {
         </select>
 
         <textarea name="description" value={form.description} onChange={handleChange} placeholder="Description" rows={3} className="border w-full p-2 rounded" />
+<textarea
+  name="meta_description"
+  value={form.meta_description}
+  onChange={handleChange}
+  placeholder="Meta Description (for SEO)"
+  rows={2}
+  className="border w-full p-2 rounded"
+/>
+
+<input
+  type="text"
+  name="meta_keywords"
+  value={form.meta_keywords}
+  onChange={handleChange}
+  placeholder="Meta Keywords (comma-separated)"
+  className="border w-full p-2 rounded"
+/>
 
         <input type="file" name="image" accept="image/*" onChange={handleChange} className="border w-full p-2 rounded" {...(editingId ? {} : { required: true })} />
         {preview && <img src={preview} className="w-full h-60 object-contain bg-white border rounded" />}
@@ -277,6 +303,9 @@ export default function AddProductPage() {
             <p className="text-sm text-gray-600">Availability: {product.availability || 'N/A'}</p>
             <p className="text-sm text-gray-600">Label: {product.label || 'None'}</p>
             <p className="text-sm text-gray-600">Desc: {product.description || 'No description'}</p>
+            <p className="text-xs text-gray-500">Meta: {product.meta_description?.slice(0, 50)}...</p>
+<p className="text-xs text-gray-500">Keywords: {product.meta_keywords}</p>
+
             <div className="flex gap-2 mt-2">
               <button onClick={() => handleEdit(product)} className="bg-yellow-500 text-white px-3 py-1 rounded">Edit</button>
               <button onClick={() => handleDelete(product.id)} className="bg-red-600 text-white px-3 py-1 rounded">Delete</button>
@@ -289,4 +318,4 @@ export default function AddProductPage() {
     </div>
   </div>
 );
-}
+  } 

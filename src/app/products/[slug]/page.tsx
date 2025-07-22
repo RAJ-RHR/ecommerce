@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       description: product.description,
       images: [product.image],
     },
+    keywords: product.keywords || undefined, // optional SEO keywords field
   };
 }
 
@@ -46,9 +47,7 @@ export default async function ProductPage({ params }: Props) {
       return <div className="text-center mt-20 text-red-600">Product not found</div>;
     }
 
-    const product = querySnapshot.docs[0].data();
-
-    return <ProductClientView />;
+    return <ProductClientView />; // No props passed if it's handled client-side
   } catch (error) {
     console.error('❌ Error fetching product:', error);
     return <div className="text-center mt-20 text-red-600">Error loading product</div>;
