@@ -67,15 +67,18 @@ export default function ContactPage() {
         / <span>Contact</span>
       </div>
 
-      {/* Title */}
-      <h1 className="text-3xl font-semibold text-gray-800 mb-8">Contact Us</h1>
+     {/* Title */}
+<h1 className="text-3xl font-semibold text-gray-800 mb-8 text-center">
+  Contact Us
+</h1>
+
 
       {/* Centered Container for Image + Form */}
       <div className="max-w-2xl mx-auto space-y-10">
         {/* Image */}
         <div>
           <Image
-            src="/images/banner.webp"
+            src="https://res.cloudinary.com/deijswbt1/image/upload/v1753181030/banner_rsr6gr.webp"
             alt="Herbolife Products"
             className="w-full rounded-lg"
             width={800}

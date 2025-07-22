@@ -27,7 +27,7 @@ export default function HomePage() {
   const [currentBanner, setCurrentBanner] = useState(0);
   const { cartItems, addToCart, increaseQty, decreaseQty } = useCart();
 
-  const banners = ['/images/banner.webp', '/images/bans.webp'];
+  const banners = ['https://res.cloudinary.com/deijswbt1/image/upload/v1753181030/bans_eebjew.webp', 'https://res.cloudinary.com/deijswbt1/image/upload/v1753181030/banner_rsr6gr.webp'];
 
   useEffect(() => {
     const fetchProducts = async () => {
