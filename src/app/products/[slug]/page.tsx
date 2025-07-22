@@ -19,14 +19,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const product = querySnapshot.docs[0].data();
 
   return {
-    title: `${product.name} | Herbolife Store`,
-    description: product.description || 'Explore premium health products on Herbolife.',
+    title: `${product.name} | ${product.category} | Herbolife Store`,
+    description: product.meta_description || 'Explore premium health products on Herbolife.',
     openGraph: {
       title: product.name,
-      description: product.description,
+      description: product.meta_description || 'Explore premium health products on Herbolife.',
       images: [product.image],
     },
-    keywords: product.keywords || undefined, // optional SEO keywords field
+    keywords: product.meta_keywords || 'health, wellness, nutrition, supplements,Herbolife, Health Products, Nutrition, original ayurvedic products'
+ 
   };
 }
 
