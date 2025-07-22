@@ -57,7 +57,7 @@ export default function ContactPage() {
   };
 
   return (
-  <div className="mt-20">
+  <div className="mt-5">
     <div className="max-w-screen-xl mx-auto px-4 py-10">
       {/* Breadcrumb */}
       <div className="text-sm text-gray-500 mb-2">

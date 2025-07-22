@@ -104,7 +104,7 @@ export default function ShopPage() {
   };
 
   return (
-    <div className="mt-20 px-4 md:px-8">
+    <div className="mt-14 px-4 md:px-8">
       <Head>
         <title>Shop Herbal Products | Herbolife Store</title>
         <meta name="description" content="Browse and shop premium herbal supplements, health products, and natural wellness items from Herbolife." />

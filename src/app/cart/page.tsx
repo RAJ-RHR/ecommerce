@@ -25,7 +25,7 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="mt-20"></div>
+      <div className="mt-7"></div>
 
       {cartItems.length === 0 ? (
         <div className="p-8 text-center">
