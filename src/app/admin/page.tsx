@@ -129,7 +129,14 @@ export default function AdminHomePage() {
   className="bg-pink-600 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-pink-700 transition duration-300 text-lg font-medium flex justify-between items-center"
 >
   Manage Blogs <span className="text-xl">→</span>
-</Link>
+</Link>    
+ {/* ✅ New Dashboard Report Button */}
+  <Link
+    href="/admin/report"
+    className="bg-gray-700 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-gray-800 transition duration-300 text-lg font-medium flex justify-between items-center"
+  >
+    Dashboard Report <span className="text-xl">→</span>
+  </Link>
 
       </div>
 

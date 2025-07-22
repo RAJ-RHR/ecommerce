@@ -62,7 +62,13 @@ export default function Footer() {
           <div className="text-left space-y-1">
             <h3 className="font-bold text-base">Address</h3>
             <p>Gurgaon, Haryana, India</p>
-            <p>Email: contact@herbolife.in</p>
+         <p className="text-sm">
+  <span className="mr-1">📧</span>
+  <a href="mailto:contact@herbolife.in" className="text-green-400  break-all">→
+    contact@herbolife.in
+  </a>
+</p>
+
           </div>
 
           {/* WhatsApp + Policies stacked */}
@@ -79,10 +85,10 @@ export default function Footer() {
 
             {/* Policies stacked below WhatsApp */}
             <div className="space-y-1 text-green-400 font-medium pt-2">
-              <Link href="/privacy-policy" className="block hover:underline">Privacy Policy</Link>
-              <Link href="/Terms" className="block hover:underline">Terms & Conditions</Link>
-              <Link href="/return" className="block hover:underline">Return & Refund</Link>
-              <Link href="/disclaimer" className="block hover:underline">Disclaimer</Link>
+              <Link href="/privacy-policy" className="block hover:underline">→Privacy Policy</Link>
+              <Link href="/Terms" className="block hover:underline">→Terms & Conditions</Link>
+              <Link href="/return" className="block hover:underline">→Return & Refund</Link>
+              <Link href="/disclaimer" className="block hover:underline">→Disclaimer</Link>
             </div>
           </div>
         </div>

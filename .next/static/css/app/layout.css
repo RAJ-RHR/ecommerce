@@ -612,6 +612,9 @@ video {
 .hidden {
   display: none;
 }
+.h-0 {
+  height: 0px;
+}
 .h-10 {
   height: 2.5rem;
 }
@@ -644,6 +647,9 @@ video {
 }
 .h-96 {
   height: 24rem;
+}
+.h-full {
+  height: 100%;
 }
 .h-screen {
   height: 100vh;
@@ -900,6 +906,9 @@ video {
 .whitespace-pre-line {
   white-space: pre-line;
 }
+.break-all {
+  word-break: break-all;
+}
 .rounded {
   border-radius: 0.25rem;
 }
@@ -924,6 +933,9 @@ video {
 }
 .border {
   border-width: 1px;
+}
+.border-0 {
+  border-width: 0px;
 }
 .border-b {
   border-bottom-width: 1px;
@@ -995,10 +1007,6 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
-.bg-gray-300 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(209 213 219 / var(--tw-bg-opacity, 1));
-}
 .bg-gray-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity, 1));
@@ -1055,6 +1063,10 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(220 38 38 / var(--tw-bg-opacity, 1));
 }
+.bg-teal-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
+}
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
@@ -1062,10 +1074,6 @@ video {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
-}
-.bg-teal-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(13 148 136 / var(--tw-bg-opacity, 1));
 }
 .object-contain {
   -o-object-fit: contain;
@@ -1161,6 +1169,9 @@ video {
 }
 .pb-4 {
   padding-bottom: 1rem;
+}
+.pb-\[56\.25\%\] {
+  padding-bottom: 56.25%;
 }
 .pl-5 {
   padding-left: 1.25rem;
@@ -1562,6 +1573,10 @@ body {
     padding-left: 0.75rem;
     padding-right: 0.75rem;
   }
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
 }
 @media (min-width: 768px) {
   .md\:col-span-2 {
@@ -1606,6 +1621,9 @@ body {
   .md\:items-center {
     align-items: center;
   }
+  .md\:justify-end {
+    justify-content: flex-end;
+  }
   .md\:justify-between {
     justify-content: space-between;
   }
@@ -1620,6 +1638,9 @@ body {
   .md\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+  .md\:text-left {
+    text-align: left;
   }
   .md\:text-base {
     font-size: 1rem;
@@ -1638,11 +1659,6 @@ body {
   }
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-@media (min-width: 1280px) {
-  .xl\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
