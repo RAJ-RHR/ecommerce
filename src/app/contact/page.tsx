@@ -75,7 +75,7 @@ export default function ContactPage() {
         {/* Image */}
         <div>
           <Image
-            src="/images/banner.jpg"
+            src="/images/banner.webp"
             alt="Herbolife Products"
             className="w-full rounded-lg"
             width={800}
