@@ -1,67 +1,65 @@
+// app/admin/login/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { auth } from '@/lib/firebase';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { db } from '@/lib/firebase';
-import { collection, query, where, getDocs } from 'firebase/firestore';
 
 export default function AdminLoginPage() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
-
-  useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem('admin') === 'true') {
-      router.push('/admin');
-    }
-  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     try {
-      const adminRef = collection(db, 'admins');
-      const q = query(adminRef, where('username', '==', username), where('password', '==', password));
-      const snapshot = await getDocs(q);
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      const user = result.user;
 
-      console.log("Found admins:", snapshot.size);
-
-      if (!snapshot.empty) {
-        localStorage.setItem('admin', 'true');
-        router.push('/admin');
-      } else {
-        setError('Invalid username or password');
+      // Optional: You can restrict access by specific email
+      if (user.email !== 'rhr@herbolife.in') {
+        setError('You are not authorized');
+        return;
       }
-    } catch (err) {
-      console.error("Login error:", err);
-      setError('Something went wrong. Please try again.');
+
+      // Save admin session in localStorage
+      localStorage.setItem('admin', 'true');
+      router.push('/admin');
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100 px-4">
-      <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-full max-w-sm">
-        <h2 className="text-xl font-bold mb-4 text-center">🔒 Admin Login</h2>
+    <div className="max-w-md mx-auto mt-32 p-6 bg-white rounded shadow">
+      <h2 className="text-2xl font-bold mb-6 text-center">Admin Login</h2>
+
+      <form onSubmit={handleLogin} className="space-y-4">
         <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          placeholder="Username"
-          className="w-full border p-2 mb-4 rounded"
+          type="email"
+          placeholder="Email"
+          className="w-full p-2 border rounded"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
+          placeholder="Password"
+          className="w-full p-2 border rounded"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          className="w-full border p-2 mb-4 rounded"
           required
         />
-        {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
-        <button className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700">
+        {error && <p className="text-red-600">{error}</p>}
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+        >
           Login
         </button>
       </form>

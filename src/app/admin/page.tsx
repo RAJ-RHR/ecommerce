@@ -4,49 +4,29 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/lib/firebase'; // make sure this path is correct
+import { db } from '@/lib/firebase';
 
 export default function AdminHomePage() {
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const router = useRouter();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checking, setChecking] = useState(true);
+
   const [pendingReviews, setPendingReviews] = useState(0);
   const [pendingContacts, setPendingContacts] = useState(0);
   const [pendingOrders, setPendingOrders] = useState(0);
 
-  const router = useRouter();
-
   useEffect(() => {
-    const isAdmin = localStorage.getItem('admin');
-    if (isAdmin === 'true') {
-      setIsAuthorized(true);
-
-      // Auto logout after 5 minutes
-      let timeout: NodeJS.Timeout;
-      const resetTimer = () => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => {
-          localStorage.removeItem('admin');
-          alert('Session expired due to inactivity.');
-          router.push('/admin/login');
-        }, 2 * 60 * 1000);
-      };
-
-      const events = ['mousemove', 'keydown', 'click', 'scroll'];
-      events.forEach((event) => document.addEventListener(event, resetTimer));
-      resetTimer();
-
-      return () => {
-        clearTimeout(timeout);
-        events.forEach((event) =>
-          document.removeEventListener(event, resetTimer)
-        );
-      };
+    const adminFlag = localStorage.getItem('admin');
+    if (adminFlag === 'true') {
+      setIsAdmin(true);
     } else {
       router.push('/admin/login');
     }
+    setChecking(false);
   }, []);
 
   useEffect(() => {
-    if (!isAuthorized) return;
+    if (!isAdmin) return;
 
     const fetchCounts = async () => {
       const reviewSnap = await getDocs(
@@ -66,15 +46,13 @@ export default function AdminHomePage() {
     };
 
     fetchCounts();
-  }, [isAuthorized]);
+  }, [isAdmin]);
 
-  if (!isAuthorized) return null;
+  if (checking) return null;
 
   return (
     <div className="mt-24 max-w-4xl mx-auto px-6 text-center">
-      
       <h1 className="text-3xl font-bold mb-10 text-gray-800">Admin Dashboard</h1>
-      
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Orders */}
@@ -123,33 +101,33 @@ export default function AdminHomePage() {
             </span>
           )}
         </Link>
-        {/* Blogs */}
-<Link
-  href="/admin/blog"
-  className="bg-pink-600 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-pink-700 transition duration-300 text-lg font-medium flex justify-between items-center"
->
-  Manage Blogs <span className="text-xl">→</span>
-</Link>    
- {/* ✅ New Dashboard Report Button */}
-  <Link
-    href="/admin/report"
-    className="bg-gray-700 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-gray-800 transition duration-300 text-lg font-medium flex justify-between items-center"
-  >
-    Dashboard Report <span className="text-xl">→</span>
-  </Link>
 
+        {/* Blogs */}
+        <Link
+          href="/admin/blog"
+          className="bg-pink-600 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-pink-700 transition duration-300 text-lg font-medium flex justify-between items-center"
+        >
+          Manage Blogs <span className="text-xl">→</span>
+        </Link>
+
+        {/* Report */}
+        <Link
+          href="/admin/report"
+          className="bg-gray-700 text-white p-6 rounded-xl shadow hover:shadow-lg hover:bg-gray-800 transition duration-300 text-lg font-medium flex justify-between items-center"
+        >
+          Dashboard Report <span className="text-xl">→</span>
+        </Link>
       </div>
 
-     <button
-  onClick={() => {
-    localStorage.removeItem('admin');
-    router.push('/admin/login');
-  }}
-  className="mt-10 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
->
-  Logout
-</button>
-
+      <button
+        onClick={() => {
+          localStorage.removeItem('admin');
+          router.push('/admin/login');
+        }}
+        className="mt-10 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+      >
+        Logout
+      </button>
     </div>
   );
 }
