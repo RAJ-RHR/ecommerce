@@ -338,78 +338,100 @@ fetchCategories();
           </div>
         </div>
 
-      {/* ⭐ REVIEWS SECTION */}
-<section className="mt-10 border-t border-gray-300 pt-6">
-  <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+      
+    {/* ⭐ REVIEWS SECTION */}
+    <section className="mt-10 border-t border-gray-300 pt-6">
+      <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
 
-  {/* 🔄 Loading Skeleton */}
-  {loadingReviews && reviews.length === 0 && (
-    <div className="space-y-4">
-      {[...Array(3)].map((_, i) => (
-        <div
-          key={i}
-          className="h-24 bg-gray-100 animate-pulse rounded-lg border border-gray-200"
-        ></div>
-      ))}
-    </div>
-  )}
-
-  {/* ✅ Reviews Display */}
-  {!loadingReviews && reviews.length > 0 ? (
-    <>
-      <div className="grid gap-4">
-        {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
-          const date =
-            review.dateOfSubmit instanceof Date
-              ? review.dateOfSubmit
-              : review.dateOfSubmit?.seconds
-              ? new Date(review.dateOfSubmit.seconds * 1000)
-              : null;
-
-          const formattedDate = date
-            ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
-                .toString()
-                .padStart(2, '0')}/${date.getFullYear()}`
-            : 'N/A';
-
-          return (
+      {/* Skeleton Placeholder while loading */}
+      {loadingReviews && reviews.length === 0 && (
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
             <div
-              key={review.id}
-              className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <p className="font-semibold text-gray-800">
-                  {review.name}
-                  <span className="text-sm text-gray-500 font-normal ml-2">
-                    {formattedDate}
-                  </span>
-                </p>
-                <div className="text-yellow-500 text-sm leading-none">
-                  <span>{'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}</span>
-                </div>
-              </div>
-              <p className="text-gray-700 text-sm">{review.message}</p>
-            </div>
-          );
-        })}
-      </div>
-
-      {/* 🔽 Toggle Reviews Button */}
-      {reviews.length > 3 && (
-        <button
-          onClick={() => setShowAllReviews(!showAllReviews)}
-          className="mt-4 text-blue-600 hover:underline text-sm"
-        >
-          {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
-        </button>
+              key={i}
+              className="h-20 bg-gray-100 animate-pulse rounded-lg border border-gray-200"
+            ></div>
+          ))}
+        </div>
       )}
-    </>
-  ) : (
-    !loadingReviews && (
-      <p className="text-sm text-gray-500">No reviews yet.</p>
-    )
-  )}
-</section>
+
+      {!loadingReviews && reviews.length > 0 ? (
+        <>
+          <div className="grid gap-4">
+            {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
+              const date =
+                review.dateOfSubmit instanceof Date
+                  ? review.dateOfSubmit
+                  : review.dateOfSubmit?.seconds
+                  ? new Date(review.dateOfSubmit.seconds * 1000)
+                  : null;
+
+              const formattedDate = date
+                ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+                    .toString()
+                    .padStart(2, '0')}/${date.getFullYear()}`
+                : 'N/A';
+
+              return (
+                <div
+                  key={review.id}
+                  className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="font-semibold text-gray-800">
+                      {review.name}{' '}
+                      <span className="text-sm text-gray-500 font-normal">{formattedDate}</span>
+                    </p>
+                    <div className="text-yellow-500 text-sm">
+                      <span>
+                        {'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 text-sm">{review.message}</p>
+                </div>
+              );
+            })}
+          </div>
+
+          {reviews.length > 3 && (
+            <button
+              onClick={() => setShowAllReviews(!showAllReviews)}
+              className="mt-4 text-blue-600 hover:underline text-sm"
+            >
+              {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
+            </button>
+          )}
+        </>
+      ) : (
+        !loadingReviews && <p className="text-sm text-gray-500">No reviews yet.</p>
+      )}
+    </section>
+
+    {/* ✅ Product Schema for SEO */}
+    {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
+      <Script
+        type="application/ld+json"
+        id="product-schema"
+        strategy="lazyOnload"
+      >
+        {JSON.stringify({
+          "@context": "https://schema.org/",
+          "@type": "Product",
+          name: product.name,
+          image: product.image,
+          description: product.description,
+          brand: {
+            "@type": "Brand",
+            name: "Herbolife Store",
+          },
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: averageRating,
+            reviewCount: reviews.length,
+          },
+        })}
+      </Script>
 
           {/* ⭐ REVIEW FORM */}
           <div className="mt-10">
