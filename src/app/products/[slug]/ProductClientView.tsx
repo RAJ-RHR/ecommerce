@@ -2,6 +2,7 @@
 
 
 import { useEffect, useState } from 'react';
+
 import { db } from '@/lib/firebase';
 import {
   collection,
@@ -42,6 +43,13 @@ dateOfSubmit?: { seconds: number } | Date | null;
 
 export default function ProductPage() {
   const [showAllReviews, setShowAllReviews] = useState(false);
+const [hydrated, setHydrated] = useState(false);
+
+useEffect(() => {
+  setHydrated(true);
+}, []);
+
+
 
   const { slug } = useParams();
   const [product, setProduct] = useState<ProductWithSlug | null>(null);
@@ -51,6 +59,7 @@ export default function ProductPage() {
   const [loading, setLoading] = useState(true);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewForm, setReviewForm] = useState({ name: '', message: '', rating: 5 });
+if (!hydrated || loading || !product) return null;
 
   const {
     addToCart,
