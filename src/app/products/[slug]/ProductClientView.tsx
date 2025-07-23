@@ -2,7 +2,6 @@
 
 
 import { useEffect, useState } from 'react';
-
 import { db } from '@/lib/firebase';
 import {
   collection,
@@ -43,13 +42,6 @@ dateOfSubmit?: { seconds: number } | Date | null;
 
 export default function ProductPage() {
   const [showAllReviews, setShowAllReviews] = useState(false);
-const [hydrated, setHydrated] = useState(false);
-
-useEffect(() => {
-  setHydrated(true);
-}, []);
-
-
 
   const { slug } = useParams();
   const [product, setProduct] = useState<ProductWithSlug | null>(null);
@@ -57,19 +49,8 @@ useEffect(() => {
   const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
   const [availability, setAvailability] = useState<string>('');
   const [loading, setLoading] = useState(true);
-if (!hydrated) return null;
-
-if (loading || !product) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p className="text-gray-600 text-lg">Loading product...</p>
-    </div>
-  );
-}
-
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewForm, setReviewForm] = useState({ name: '', message: '', rating: 5 });
-
 
   const {
     addToCart,
@@ -83,12 +64,7 @@ if (loading || !product) {
       setLoading(true);
 
       if (!slug || typeof slug !== 'string') {
-        console.log('⏳ Fetching product for slug:', slug);
-
         setLoading(false);
-        setLoading(false);
-console.log('🚀 Done loading product');
-
         return;
       }
 
@@ -96,13 +72,10 @@ console.log('🚀 Done loading product');
       const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
-        
         const docSnap = snapshot.docs[0];
         const data = docSnap.data();
-        
 
       const fetchedProduct: ProductWithSlug = {
-        
   id: docSnap.id,
   name: data.name,
   image: data.image,
