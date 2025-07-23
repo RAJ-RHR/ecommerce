@@ -104,20 +104,36 @@ export default function AdminOrdersPage() {
   const totalPages = Math.ceil(filteredOrders.length / perPage);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto mb-5 mt-5 px-4 py-10">
       
-      <div className="flex justify-between items-center mb-6">
+     
         <h1 className="text-2xl font-bold">📦 Admin Orders Panel</h1>
+
+     <div className="flex gap-3 p-4 mt-7 border-b mb-4">
+        <button
+          onClick={() => router.push('/admin')}
+          className="bg-gray-700 text-white px-3 py-2 rounded hover:bg-gray-800"
+        >
+          🏠 Home
+        </button>
+        <button
+          onClick={() => router.push('/admin/blog')}
+          className="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700"
+        >
+          📦 View Blogs
+        </button>
         <button
           onClick={() => {
             localStorage.removeItem('admin');
             router.push('/admin/login');
           }}
-          className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+          className="bg-red-600 text-white px-3 py-2 rounded hover:bg-red-700"
         >
           🔓 Logout
         </button>
       </div>
+     
+     
 
       {/* 🔍 Search & Filters */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
@@ -250,7 +266,7 @@ export default function AdminOrdersPage() {
 
       {/* ⏪ Pagination Controls */}
       {totalPages > 1 && (
-        <div className="flex justify-center mt-6 gap-4 items-center">
+        <div className="flex justify-center mt-6 mb-4 gap-4 items-center">
           <button
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => p - 1)}
@@ -271,12 +287,6 @@ export default function AdminOrdersPage() {
         </div>
       )}
 
-      <Link
-        href="/admin"
-       className="bg-gray-700 text-white px-2 py-2 rounded hover:bg-gray-800"
-      >
-        ← Back to Home
-      </Link>
     </div>
   );
 }

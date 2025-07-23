@@ -189,6 +189,7 @@ export default function HomePage() {
             key={index}
             src={src}
             alt={`Banner ${index}`}
+              priority // ✅ This line tells Next.js it's critical
             fill
             className={`object-contain transition-opacity duration-1000 ${
               index === currentBanner ? 'opacity-100 z-10' : 'opacity-0 z-0'

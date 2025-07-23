@@ -250,7 +250,7 @@ fetchCategories();
     <>
      
    {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
-  <Script type="application/ld+json" id="product-schema" strategy="afterInteractive">
+  <Script type="application/ld+json" id="product-schema" strategy="lazyOnload">
     {JSON.stringify({
       '@context': 'https://schema.org/',
       '@type': 'Product',

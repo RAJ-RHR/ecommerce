@@ -220,7 +220,7 @@ const router = useRouter(); // Add this if not already present
 
   return (    <>
       {/* 🔼 Admin Navbar */}
-      <div className="flex gap-3 p-4 border-b mb-4">
+      <div className="flex gap-3 p-4 mt-7 border-b mb-4">
         <button
           onClick={() => router.push('/admin')}
           className="bg-gray-700 text-white px-3 py-2 rounded hover:bg-gray-800"
