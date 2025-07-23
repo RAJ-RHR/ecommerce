@@ -341,24 +341,36 @@ fetchCategories();
       {/* ⭐ REVIEWS SECTION */}
 <section className="mt-10 border-t border-gray-300 pt-6">
   <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
-  {reviews.length > 0 ? (
+
+  {/* 🔄 Loading Skeleton */}
+  {loadingReviews && reviews.length === 0 && (
+    <div className="space-y-4">
+      {[...Array(3)].map((_, i) => (
+        <div
+          key={i}
+          className="h-24 bg-gray-100 animate-pulse rounded-lg border border-gray-200"
+        ></div>
+      ))}
+    </div>
+  )}
+
+  {/* ✅ Reviews Display */}
+  {!loadingReviews && reviews.length > 0 ? (
     <>
-     <div className="grid gap-4">
-  {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
-    
-    const date =
-      review.dateOfSubmit instanceof Date
-        ? review.dateOfSubmit
-        : review.dateOfSubmit?.seconds
-        ? new Date(review.dateOfSubmit.seconds * 1000)
-        : null;
+      <div className="grid gap-4">
+        {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
+          const date =
+            review.dateOfSubmit instanceof Date
+              ? review.dateOfSubmit
+              : review.dateOfSubmit?.seconds
+              ? new Date(review.dateOfSubmit.seconds * 1000)
+              : null;
 
-    const formattedDate = date
-      ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}/${date.getFullYear()}`
-      : 'N/A';
-
+          const formattedDate = date
+            ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+                .toString()
+                .padStart(2, '0')}/${date.getFullYear()}`
+            : 'N/A';
 
           return (
             <div
@@ -367,13 +379,13 @@ fetchCategories();
             >
               <div className="flex items-center justify-between mb-2">
                 <p className="font-semibold text-gray-800">
-                  {review.name}{' '}
-                  <span className="text-sm text-gray-500 font-normal">{formattedDate}</span>
+                  {review.name}
+                  <span className="text-sm text-gray-500 font-normal ml-2">
+                    {formattedDate}
+                  </span>
                 </p>
-                <div className="text-yellow-500 text-sm">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <span key={index}>{index < review.rating ? '★' : '☆'}</span>
-                  ))}
+                <div className="text-yellow-500 text-sm leading-none">
+                  <span>{'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}</span>
                 </div>
               </div>
               <p className="text-gray-700 text-sm">{review.message}</p>
@@ -382,6 +394,7 @@ fetchCategories();
         })}
       </div>
 
+      {/* 🔽 Toggle Reviews Button */}
       {reviews.length > 3 && (
         <button
           onClick={() => setShowAllReviews(!showAllReviews)}
@@ -392,10 +405,11 @@ fetchCategories();
       )}
     </>
   ) : (
-    <p className="text-sm text-gray-500">No reviews yet.</p>
+    !loadingReviews && (
+      <p className="text-sm text-gray-500">No reviews yet.</p>
+    )
   )}
-
-
+</section>
 
           {/* ⭐ REVIEW FORM */}
           <div className="mt-10">
