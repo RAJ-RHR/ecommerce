@@ -248,13 +248,14 @@ fetchCategories();
   return (
     <>
      
-   {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
+  
+  {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
   <Script type="application/ld+json" id="product-schema" strategy="lazyOnload">
     {JSON.stringify({
       '@context': 'https://schema.org/',
       '@type': 'Product',
       name: product.name,
-      image: [product.image],
+      image: Array.isArray(product.image) ? product.image : [product.image],
       description: description,
       sku: product.id,
       brand: {
@@ -278,6 +279,7 @@ fetchCategories();
     })}
   </Script>
 )}
+
 
       <div className="mt-20 px-4 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">

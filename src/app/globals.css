@@ -4,10 +4,17 @@
 @tailwind utilities;
 
 /* Global Styles */
+html, body {
+  scroll-behavior: smooth;
+  overscroll-behavior: contain;       /* Prevent scroll chaining/jump on mobile */
+}
+
 body {
   font-family: Arial, sans-serif;
   background-color: white;
   color: #1f2937; /* Tailwind's text-gray-800 */
+  -webkit-tap-highlight-color: transparent; /* Remove grey highlight on mobile tap */
+  touch-action: pan-y; /* Allow vertical touch scrolling */
 }
 
 /* Sidebar Mobile Style */
