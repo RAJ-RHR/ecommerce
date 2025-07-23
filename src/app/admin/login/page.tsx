@@ -13,7 +13,7 @@ export default function AdminLoginPage() {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem('admin') === 'true') {
-      router.push('/admin/');
+      router.push('/admin');
     }
   }, []);
 
@@ -26,6 +26,8 @@ export default function AdminLoginPage() {
       const q = query(adminRef, where('username', '==', username), where('password', '==', password));
       const snapshot = await getDocs(q);
 
+      console.log("Found admins:", snapshot.size);
+
       if (!snapshot.empty) {
         localStorage.setItem('admin', 'true');
         router.push('/admin');
@@ -33,13 +35,13 @@ export default function AdminLoginPage() {
         setError('Invalid username or password');
       }
     } catch (err) {
-      console.error(err);
+      console.error("Login error:", err);
       setError('Something went wrong. Please try again.');
     }
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
+    <div className="flex justify-center items-center h-screen bg-gray-100 px-4">
       <form onSubmit={handleLogin} className="bg-white p-6 rounded shadow w-full max-w-sm">
         <h2 className="text-xl font-bold mb-4 text-center">🔒 Admin Login</h2>
         <input
