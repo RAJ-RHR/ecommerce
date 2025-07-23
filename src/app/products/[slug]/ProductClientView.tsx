@@ -98,6 +98,15 @@ export default function ProductPage() {
 
       setLoading(false);
     };
+useEffect(() => {
+  const handleTouch = (e: TouchEvent) => {
+    console.log('Touched at:', e.target);
+  };
+  document.addEventListener('touchstart', handleTouch);
+  return () => {
+    document.removeEventListener('touchstart', handleTouch);
+  };
+}, []);
 
     const fetchRelated = async (category: string, excludeSlug: string) => {
       const q = query(collection(db, 'products'), where('category', '==', category), limit(4));
