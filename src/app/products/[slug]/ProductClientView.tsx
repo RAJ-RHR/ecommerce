@@ -437,7 +437,7 @@ fetchCategories();
 </div>
 {/* Related Products */}
 {related.length > 0 && (
- <section className="px-4 md:px-8 my-12 touch-pan-y scroll-smooth">
+ <section className="px-4 md:px-8 my-12 touch-pan-y scroll-smooth" data-section="related-products">
 
     <h2 className="text-xl font-bold mb-4">Related Products</h2>
     <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
