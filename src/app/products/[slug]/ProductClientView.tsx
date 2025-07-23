@@ -57,9 +57,10 @@ useEffect(() => {
   const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
   const [availability, setAvailability] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  if (!hydrated || loading || !product) return null;
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewForm, setReviewForm] = useState({ name: '', message: '', rating: 5 });
-if (!hydrated || loading || !product) return null;
+
 
   const {
     addToCart,
