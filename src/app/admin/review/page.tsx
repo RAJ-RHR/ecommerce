@@ -76,18 +76,36 @@ export default function ReviewModerationPage() {
     }
   };
 
-  const handleSaveEdit = async () => {
-    if (!editModal) return;
-    await updateDoc(doc(db, 'reviews', editModal.id), {
-      name: editModal.name,
-      message: editModal.message,
-      rating: editModal.rating,
-      status: editModal.status,
-      dateOfSubmit: editModal.dateOfSubmit instanceof Date ? editModal.dateOfSubmit : new Date(editModal.dateOfSubmit),
-    });
-    setEditModal(null);
-    fetchData();
-  };
+ const handleSaveEdit = async () => {
+  if (!editModal) return;
+
+  let parsedDate = null;
+
+  try {
+    if (editModal.dateOfSubmit instanceof Date) {
+      parsedDate = editModal.dateOfSubmit;
+    } else if (editModal.dateOfSubmit?.seconds) {
+      parsedDate = new Date(editModal.dateOfSubmit.seconds * 1000);
+    } else {
+      const tempDate = new Date(editModal.dateOfSubmit);
+      parsedDate = isNaN(tempDate.getTime()) ? null : tempDate;
+    }
+  } catch {
+    parsedDate = null;
+  }
+
+  await updateDoc(doc(db, 'reviews', editModal.id), {
+    name: editModal.name,
+    message: editModal.message,
+    rating: editModal.rating,
+    status: editModal.status,
+    ...(parsedDate && { dateOfSubmit: parsedDate }),
+  });
+
+  setEditModal(null);
+  fetchData();
+};
+
 
   const filtered = reviews
     .filter(r => r.status === filterStatus)
@@ -261,20 +279,24 @@ className="bg-gray-700 text-white px-2 py-2 rounded hover:bg-gray-800"
 <input
   type="date"
   className="border w-full p-2 mb-4"
-  value={
-    editModal.dateOfSubmit?.seconds
-      ? new Date(editModal.dateOfSubmit.seconds * 1000).toISOString().slice(0, 10)
-      : editModal.dateOfSubmit
-      ? new Date(editModal.dateOfSubmit).toISOString().slice(0, 10)
-      : ''
-  }
+  value={(() => {
+    try {
+      if (editModal.dateOfSubmit?.seconds) {
+        return new Date(editModal.dateOfSubmit.seconds * 1000).toISOString().slice(0, 10);
+      }
+      const date = new Date(editModal.dateOfSubmit);
+      return isNaN(date.getTime()) ? '' : date.toISOString().slice(0, 10);
+    } catch {
+      return '';
+    }
+  })()}
   onChange={(e) => {
     const selectedDate = new Date(e.target.value);
-    // Reset time to midnight
     selectedDate.setHours(0, 0, 0, 0);
     setEditModal({ ...editModal, dateOfSubmit: selectedDate });
   }}
 />
+
 
 
             <label className="block text-sm mb-1">Name</label>
