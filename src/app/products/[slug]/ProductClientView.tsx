@@ -16,7 +16,6 @@ import { useParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/context/CartContext';
 import Script from 'next/script';
-import Head from 'next/head';
 import Link from 'next/link';
 
 
@@ -435,7 +434,8 @@ fetchCategories();
 </div>
 {/* Related Products */}
 {related.length > 0 && (
-  <section className="px-4 md:px-8 my-12" id="related-products">
+ <section className="px-4 md:px-8 my-12 touch-pan-y scroll-smooth">
+
     <h2 className="text-xl font-bold mb-4">Related Products</h2>
     <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
       {related.map((item) => {
@@ -519,7 +519,8 @@ fetchCategories();
 
 {/* Shop by Category */}
 {categoryShowcase.length > 0 && (
-  <section className="w-full mt-12 mb-8 px-4 md:px-8">
+<section className="w-full mt-12 mb-8 px-4 md:px-8 touch-pan-y scroll-smooth">
+
     <h2 className="text-2xl font-bold mb-4 text-center">
       SHOP BY <span className="text-green-600">CATEGORY</span>
     </h2>
