@@ -338,140 +338,77 @@ fetchCategories();
           </div>
         </div>
 
-      
-    {/* ⭐ REVIEWS SECTION */}
-    <section className="mt-10 border-t border-gray-300 pt-6">
-      <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+      {/* ⭐ REVIEWS SECTION */}
+<section className="mt-10 border-t border-gray-300 pt-6">
+  <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
 
-      {/* Skeleton Placeholder while loading */}
-      {loadingReviews && reviews.length === 0 && (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
+  {/* Skeleton Placeholder */}
+  {loadingReviews && reviews.length === 0 && (
+    <div className="space-y-4">
+      {[...Array(3)].map((_, i) => (
+        <div
+          key={i}
+          className="h-20 bg-gray-100 animate-pulse rounded-lg border border-gray-200"
+        />
+      ))}
+    </div>
+  )}
+
+  {!loadingReviews && reviews.length > 0 ? (
+    <>
+      <div className="grid gap-4">
+        {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
+          const date =
+            review.dateOfSubmit instanceof Date
+              ? review.dateOfSubmit
+              : review.dateOfSubmit?.seconds
+              ? new Date(review.dateOfSubmit.seconds * 1000)
+              : null;
+
+          const formattedDate = date
+            ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+                .toString()
+                .padStart(2, '0')}/${date.getFullYear()}`
+            : 'N/A';
+
+          return (
             <div
-              key={i}
-              className="h-20 bg-gray-100 animate-pulse rounded-lg border border-gray-200"
-            ></div>
-          ))}
-        </div>
-      )}
-
-      {!loadingReviews && reviews.length > 0 ? (
-        <>
-          <div className="grid gap-4">
-            {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
-              const date =
-                review.dateOfSubmit instanceof Date
-                  ? review.dateOfSubmit
-                  : review.dateOfSubmit?.seconds
-                  ? new Date(review.dateOfSubmit.seconds * 1000)
-                  : null;
-
-              const formattedDate = date
-                ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
-                    .toString()
-                    .padStart(2, '0')}/${date.getFullYear()}`
-                : 'N/A';
-
-              return (
-                <div
-                  key={review.id}
-                  className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <p className="font-semibold text-gray-800">
-                      {review.name}{' '}
-                      <span className="text-sm text-gray-500 font-normal">{formattedDate}</span>
-                    </p>
-                    <div className="text-yellow-500 text-sm">
-                      <span>
-                        {'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-gray-700 text-sm">{review.message}</p>
+              key={review.id}
+              className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <p className="font-semibold text-gray-800">
+                  {review.name}
+                  <span className="ml-2 text-sm text-gray-500 font-normal">
+                    {formattedDate}
+                  </span>
+                </p>
+                <div className="text-yellow-500 text-sm">
+                  {'★'.repeat(review.rating) + '☆'.repeat(5 - review.rating)}
                 </div>
-              );
-            })}
-          </div>
-
-          {reviews.length > 3 && (
-            <button
-              onClick={() => setShowAllReviews(!showAllReviews)}
-              className="mt-4 text-blue-600 hover:underline text-sm"
-            >
-              {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
-            </button>
-          )}
-        </>
-      ) : (
-        !loadingReviews && <p className="text-sm text-gray-500">No reviews yet.</p>
-      )}
-    </section>
-
-    {/* ✅ Product Schema for SEO */}
-    {reviews.length > 0 && averageRating >= 1 && averageRating <= 5 && (
-      <Script
-        type="application/ld+json"
-        id="product-schema"
-        strategy="lazyOnload"
-      >
-        {JSON.stringify({
-          "@context": "https://schema.org/",
-          "@type": "Product",
-          name: product.name,
-          image: product.image,
-          description: product.description,
-          brand: {
-            "@type": "Brand",
-            name: "Herbolife Store",
-          },
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: averageRating,
-            reviewCount: reviews.length,
-          },
+              </div>
+              <p className="text-gray-700 text-sm">{review.message}</p>
+            </div>
+          );
         })}
-      </Script>
-
-          {/* ⭐ REVIEW FORM */}
-          <div className="mt-10">
-            <h4 className="font-semibold mb-2">Write a Review</h4>
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="w-full border px-2 py-1 rounded mb-2"
-              value={reviewForm.name}
-              onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
-            />
-            <textarea
-              placeholder="Your Review"
-              className="w-full border px-2 py-1 rounded mb-2"
-              value={reviewForm.message}
-              onChange={(e) => setReviewForm({ ...reviewForm, message: e.target.value })}
-            />
-           <div className="flex gap-1 mb-2 cursor-pointer">
-  {Array.from({ length: 5 }).map((_, index) => (
-    <span
-      key={index}
-      className={`text-2xl ${
-        index < reviewForm.rating ? 'text-yellow-500' : 'text-gray-300'
-      }`}
-      onClick={() => setReviewForm({ ...reviewForm, rating: index + 1 })}
-    >
-      ★
-    </span>
-  ))}
-</div>
-
-            <button
-              onClick={handleReviewSubmit}
-              className="bg-green-600 text-white px-4 py-1 rounded"
-            >
-              Submit Review
-            </button>
-          </div>
-        </section>
       </div>
+
+      {reviews.length > 3 && (
+        <button
+          onClick={() => setShowAllReviews(!showAllReviews)}
+          className="mt-4 text-blue-600 hover:underline text-sm"
+        >
+          {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
+        </button>
+      )}
+    </>
+  ) : (
+    !loadingReviews && (
+      <p className="text-sm text-gray-500">No reviews yet.</p>
+    )
+  )}
+</section>
+    
 {/* Related Products */}
 {related.length > 0 && (
   <section className="px-4 md:px-8 my-12" id="related-products">
