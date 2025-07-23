@@ -16,7 +16,6 @@ import { useParams } from 'next/navigation';
 import { useCart } from '@/context/CartContext';
 import type { Product } from '@/context/CartContext';
 import Script from 'next/script';
-import Head from 'next/head';
 import Link from 'next/link';
 
 
@@ -338,27 +337,26 @@ fetchCategories();
           </div>
         </div>
 
-      {/* ⭐ REVIEWS SECTION */}
+ {/* ⭐ REVIEWS SECTION */}
 <section className="mt-10 border-t border-gray-300 pt-6">
   <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
+
   {reviews.length > 0 ? (
     <>
-     <div className="grid gap-4">
-  {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
-    
-    const date =
-      review.dateOfSubmit instanceof Date
-        ? review.dateOfSubmit
-        : review.dateOfSubmit?.seconds
-        ? new Date(review.dateOfSubmit.seconds * 1000)
-        : null;
+      <div className="grid gap-4">
+        {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
+          const date =
+            review.dateOfSubmit instanceof Date
+              ? review.dateOfSubmit
+              : review.dateOfSubmit?.seconds
+              ? new Date(review.dateOfSubmit.seconds * 1000)
+              : null;
 
-    const formattedDate = date
-      ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
-          .toString()
-          .padStart(2, '0')}/${date.getFullYear()}`
-      : 'N/A';
-
+          const formattedDate = date
+            ? `${date.getDate().toString().padStart(2, '0')}/${(date.getMonth() + 1)
+                .toString()
+                .padStart(2, '0')}/${date.getFullYear()}`
+            : 'N/A';
 
           return (
             <div
@@ -368,7 +366,7 @@ fetchCategories();
               <div className="flex items-center justify-between mb-2">
                 <p className="font-semibold text-gray-800">
                   {review.name}{' '}
-                  <span className="text-sm text-gray-500 font-normal">{formattedDate}</span>
+                  <span className="text-sm text-gray-500 font-normal ml-2">{formattedDate}</span>
                 </p>
                 <div className="text-yellow-500 text-sm">
                   {Array.from({ length: 5 }).map((_, index) => (
@@ -395,50 +393,49 @@ fetchCategories();
     <p className="text-sm text-gray-500">No reviews yet.</p>
   )}
 
-
-
-          {/* ⭐ REVIEW FORM */}
-          <div className="mt-10">
-            <h4 className="font-semibold mb-2">Write a Review</h4>
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="w-full border px-2 py-1 rounded mb-2"
-              value={reviewForm.name}
-              onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
-            />
-            <textarea
-              placeholder="Your Review"
-              className="w-full border px-2 py-1 rounded mb-2"
-              value={reviewForm.message}
-              onChange={(e) => setReviewForm({ ...reviewForm, message: e.target.value })}
-            />
-           <div className="flex gap-1 mb-2 cursor-pointer">
-  {Array.from({ length: 5 }).map((_, index) => (
-    <span
-      key={index}
-      className={`text-2xl ${
-        index < reviewForm.rating ? 'text-yellow-500' : 'text-gray-300'
-      }`}
-      onClick={() => setReviewForm({ ...reviewForm, rating: index + 1 })}
+  {/* ⭐ REVIEW FORM */}
+  <div className="mt-10">
+    <h4 className="font-semibold mb-2">Write a Review</h4>
+    <input
+      type="text"
+      placeholder="Your Name"
+      className="w-full border px-3 py-2 rounded mb-2"
+      value={reviewForm.name}
+      onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
+    />
+    <textarea
+      placeholder="Your Review"
+      className="w-full border px-3 py-2 rounded mb-2"
+      rows={4}
+      value={reviewForm.message}
+      onChange={(e) => setReviewForm({ ...reviewForm, message: e.target.value })}
+    />
+    <div className="flex gap-1 mb-3 cursor-pointer">
+      {Array.from({ length: 5 }).map((_, index) => (
+        <span
+          key={index}
+          className={`text-2xl ${
+            index < reviewForm.rating ? 'text-yellow-500' : 'text-gray-300'
+          }`}
+          onClick={() => setReviewForm({ ...reviewForm, rating: index + 1 })}
+        >
+          ★
+        </span>
+      ))}
+    </div>
+    <button
+      onClick={handleReviewSubmit}
+      className="bg-green-600 text-white px-5 py-2 rounded hover:bg-green-700"
     >
-      ★
-    </span>
-  ))}
+      Submit Review
+    </button>
+  </div>
+</section>
 </div>
-
-            <button
-              onClick={handleReviewSubmit}
-              className="bg-green-600 text-white px-4 py-1 rounded"
-            >
-              Submit Review
-            </button>
-          </div>
-        </section>
-      </div>
 {/* Related Products */}
 {related.length > 0 && (
-  <section className="px-4 md:px-8 my-12" id="related-products">
+ <section className="px-4 md:px-8 my-12 touch-pan-y scroll-smooth">
+
     <h2 className="text-xl font-bold mb-4">Related Products</h2>
     <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
       {related.map((item) => {
@@ -522,7 +519,8 @@ fetchCategories();
 
 {/* Shop by Category */}
 {categoryShowcase.length > 0 && (
-  <section className="w-full mt-12 mb-8 px-4 md:px-8">
+<section className="w-full mt-12 mb-8 px-4 md:px-8 touch-pan-y scroll-smooth">
+
     <h2 className="text-2xl font-bold mb-4 text-center">
       SHOP BY <span className="text-green-600">CATEGORY</span>
     </h2>
