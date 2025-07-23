@@ -436,78 +436,122 @@ fetchCategories();
           </div>
         </section>
       </div>
-
-
-      {/* Related Products */}
-      {related.length > 0 && (
-        <section className="px-4 md:px-8 my-12">
-          <h2 className="text-xl font-bold mb-4">Related Products</h2>
-          <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
-            {related.map((item) => {
-              const itemInCart = cartItems.find((i) => i.id === item.id);
-              return (
-                <div key={item.id} className="border rounded-xl p-4 shadow hover:shadow-lg transition text-center relative">
-                  {item.label && (
-                    <span className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(item.label)}`}>
-                      {item.label}
-                    </span>
-                  )}
-                  <Link href={`/products/${item.slug}`}>
-                    <img src={item.image} alt={item.name} className="h-40 w-full object-contain mb-2" />
-                    <h3 className="font-semibold text-base mb-1">{item.name}</h3>
-                    <p className="text-sm text-gray-500 mb-1">Category: {item.category}</p>
-                    <div className="flex justify-center items-center gap-2 mb-2">
-                      <p className="text-sm line-through text-gray-400">₹{item.price.toFixed(2)}</p>
-                      <p className="text-green-600 font-bold text-lg">₹{item.offer_price.toFixed(2)}</p>
-                    </div>
-                  </Link>
-
-                  {itemInCart ? (
-                    <>
-                      <div className="flex justify-center items-center gap-2 mb-1">
-                        <button onClick={() => decreaseQty(item.id)} className="border px-3 py-1 rounded-full">−</button>
-                        <span>{itemInCart.quantity}</span>
-                        <button onClick={() => increaseQty(item.id)} className="border px-3 py-1 rounded-full">+</button>
-                      </div>
-                      <Link href="/cart" className="text-sm border border-blue-600 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50">
-                        Go to Cart
-                      </Link>
-                    </>
-                  ) : (
-                    <button onClick={() => addToCart(item)} className="text-sm border border-green-600 text-green-600 px-3 py-1 rounded-full hover:bg-green-50">
-                      Add to Cart
-                    </button>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* Shop by Category */}
-      {categoryShowcase.length > 0 && (
-        <section className="w-full mt-12 mb-8 px-4 md:px-8">
-          <h2 className="text-2xl font-bold mb-4 text-center">
-            SHOP BY <span className="text-green-600">CATEGORY</span>
-          </h2>
-          <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar">
-            {categoryShowcase.map((prod) => (
-              <div
-                key={prod.category}
-                className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+{/* Related Products */}
+{related.length > 0 && (
+  <section className="px-4 md:px-8 my-12" id="related-products">
+    <h2 className="text-xl font-bold mb-4">Related Products</h2>
+    <div className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+      {related.map((item) => {
+        const itemInCart = cartItems.find((i) => i.id === item.id);
+        return (
+          <div
+            key={item.id}
+            className="border rounded-xl p-4 shadow hover:shadow-lg transition text-center relative"
+          >
+            {item.label && (
+              <span
+                className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${getLabelColor(
+                  item.label
+                )}`}
               >
-                <Link href={`/category/${prod.category}`}>
-                  <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
-                    <img src={prod.image} alt={prod.name} className="w-full h-32 object-contain" />
-                  </div>
-                  <h3 className="font-semibold text-sm text-center">{prod.category}</h3>
-                </Link>
+                {item.label}
+              </span>
+            )}
+
+            <Link href={`/products/${item.slug}`} className="block">
+              <div>
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  loading="lazy"
+                  className="h-40 w-full object-contain mb-2"
+                />
+                <h3 className="font-semibold text-base mb-1">{item.name}</h3>
+                <p className="text-sm text-gray-500 mb-1">
+                  Category: {item.category}
+                </p>
+                <div className="flex justify-center items-center gap-2 mb-2">
+                  <p className="text-sm line-through text-gray-400">
+                    ₹{item.price.toFixed(2)}
+                  </p>
+                  <p className="text-green-600 font-bold text-lg">
+                    ₹{item.offer_price.toFixed(2)}
+                  </p>
+                </div>
               </div>
-            ))}
+            </Link>
+
+            {itemInCart ? (
+              <>
+                <div className="flex justify-center items-center gap-2 mb-1">
+                  <button
+                    onClick={() => decreaseQty(item.id)}
+                    className="border px-3 py-1 rounded-full"
+                  >
+                    −
+                  </button>
+                  <span>{itemInCart.quantity}</span>
+                  <button
+                    onClick={() => increaseQty(item.id)}
+                    className="border px-3 py-1 rounded-full"
+                  >
+                    +
+                  </button>
+                </div>
+                <Link
+                  href="/cart"
+                  className="text-sm border border-blue-600 text-blue-600 px-3 py-1 rounded-full hover:bg-blue-50 inline-block"
+                >
+                  Go to Cart
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={() => addToCart(item)}
+                className="text-sm border border-green-600 text-green-600 px-3 py-1 rounded-full hover:bg-green-50"
+              >
+                Add to Cart
+              </button>
+            )}
           </div>
-        </section>
-      )}
+        );
+      })}
+    </div>
+  </section>
+)}
+
+{/* Shop by Category */}
+{categoryShowcase.length > 0 && (
+  <section className="w-full mt-12 mb-8 px-4 md:px-8">
+    <h2 className="text-2xl font-bold mb-4 text-center">
+      SHOP BY <span className="text-green-600">CATEGORY</span>
+    </h2>
+    <div className="flex overflow-x-auto flex-nowrap gap-4 hide-scrollbar pb-1">
+      {categoryShowcase.map((prod) => (
+        <div
+          key={prod.category}
+          className="w-[calc(50%-0.5rem)] sm:w-[calc(33.333%-0.5rem)] md:w-[calc(20%-0.5rem)] bg-white rounded-2xl shadow p-4 flex-shrink-0 hover:shadow-xl transition duration-300"
+        >
+          <Link href={`/category/${prod.category}`} className="block">
+            <div className="overflow-hidden rounded-lg mb-2 transition-transform duration-300 hover:scale-105">
+              <img
+                src={prod.image}
+                alt={prod.name}
+                loading="lazy"
+                className="w-full h-32 object-contain"
+              />
+            </div>
+            <h3 className="font-semibold text-sm text-center">
+              {prod.category}
+            </h3>
+          </Link>
+        </div>
+      ))}
+    </div>
+  </section>
+)}
+
+     
     </>
   );
 }

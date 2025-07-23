@@ -20,14 +20,15 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   return {
     title: `${product.name} | ${product.category} | Herbolife Store`,
-    description: product.meta_description || 'Explore premium health products on Herbolife.',
+    description: product.meta_description?.slice(0, 160) || 'Explore premium health products on Herbolife.',
     openGraph: {
-      title: product.name,
+      title: `${product.name} | Herbolife Store`,
       description: product.meta_description || 'Explore premium health products on Herbolife.',
       images: [product.image],
     },
-    keywords: product.meta_keywords || 'health, wellness, nutrition, supplements,Herbolife, Health Products, Nutrition, original ayurvedic products'
- 
+    keywords:
+      product.meta_keywords ||
+      'health, wellness, nutrition, supplements, Herbolife, Health Products, Nutrition, original ayurvedic products',
   };
 }
 
@@ -48,7 +49,7 @@ export default async function ProductPage({ params }: Props) {
       return <div className="text-center mt-20 text-red-600">Product not found</div>;
     }
 
-    return <ProductClientView />; // No props passed if it's handled client-side
+    return <ProductClientView />; // Product is handled inside this component
   } catch (error) {
     console.error('❌ Error fetching product:', error);
     return <div className="text-center mt-20 text-red-600">Error loading product</div>;
