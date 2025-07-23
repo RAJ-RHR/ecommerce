@@ -57,7 +57,16 @@ useEffect(() => {
   const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
   const [availability, setAvailability] = useState<string>('');
   const [loading, setLoading] = useState(true);
-  if (!hydrated || loading || !product) return null;
+if (!hydrated) return null;
+
+if (loading || !product) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p className="text-gray-600 text-lg">Loading product...</p>
+    </div>
+  );
+}
+
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewForm, setReviewForm] = useState({ name: '', message: '', rating: 5 });
 
