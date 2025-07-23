@@ -83,7 +83,12 @@ if (loading || !product) {
       setLoading(true);
 
       if (!slug || typeof slug !== 'string') {
+        console.log('⏳ Fetching product for slug:', slug);
+
         setLoading(false);
+        setLoading(false);
+console.log('🚀 Done loading product');
+
         return;
       }
 
@@ -91,10 +96,13 @@ if (loading || !product) {
       const snapshot = await getDocs(q);
 
       if (!snapshot.empty) {
+        
         const docSnap = snapshot.docs[0];
         const data = docSnap.data();
+        
 
       const fetchedProduct: ProductWithSlug = {
+        
   id: docSnap.id,
   name: data.name,
   image: data.image,
