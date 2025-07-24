@@ -78,7 +78,8 @@ export default async function ProductPage({ params }: Props) {
       meta_keywords: data.meta_keywords || '',
     };
 
-    return <ProductClientView product={product} />;
+    return<ProductClientView initialProduct={product} />
+
   } catch (error) {
     console.error('❌ Error fetching product:', error);
     return <div className="text-center mt-20 text-red-600">Error loading product</div>;

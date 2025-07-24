@@ -43,11 +43,13 @@ type ProductWithSlug = Product & {
   meta_keywords?: string;
 };
 
-export default function ProductClientView({ product }: { product: ProductWithSlug }) {
+export default function ProductClientView({ initialProduct }: { initialProduct: ProductWithSlug }) {
+  const [product, setProduct] = useState<ProductWithSlug | null>(initialProduct);
+
   const [showAllReviews, setShowAllReviews] = useState(false);
 
   const { slug } = useParams();
-  // const [product, setProduct] = useState<ProductWithSlug | null>(null);
+
   const [related, setRelated] = useState<ProductWithSlug[]>([]);
   const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
   const [availability, setAvailability] = useState<string>('');
@@ -55,6 +57,8 @@ export default function ProductClientView({ product }: { product: ProductWithSlu
   const [reviews, setReviews] = useState<Review[]>([]);
   const [reviewForm, setReviewForm] = useState({ name: '', message: '', rating: 5 });
 
+const [ratingBreakdown, setRatingBreakdown] = useState<number[]>([0, 0, 0, 0, 0]);
+ 
   const {
     addToCart,
     increaseQty,
@@ -93,7 +97,7 @@ export default function ProductClientView({ product }: { product: ProductWithSlu
 };
 
 
-        // setProduct(fetchedProduct);
+        setProduct(fetchedProduct);
         setAvailability(data.availability || '');
         fetchRelated(fetchedProduct.category, fetchedProduct.slug);
         fetchReviews(docSnap.id);
@@ -248,7 +252,16 @@ fetchCategories();
   const deliveryEnd = new Date(today);
   deliveryStart.setDate(today.getDate() + 6);
   deliveryEnd.setDate(today.getDate() + 8);
+useEffect(() => {
+  if (reviews.length) {
+    const total = reviews.reduce((sum, r) => sum + r.rating, 0);
+    // setAverageRating(total / reviews.length);
 
+    const breakdown = [0, 0, 0, 0, 0];
+    reviews.forEach(r => breakdown[r.rating - 1]++);
+    setRatingBreakdown(breakdown.reverse()); // So 5⭐ is first
+  }
+}, [reviews]); 
   return (
     <>
      
@@ -342,14 +355,43 @@ fetchCategories();
             {product.description}
           </div>
         </div>
-
- {/* ⭐ REVIEWS SECTION */}
+{/* ⭐ REVIEWS SECTION */}
 <section className="mt-10 border-t border-gray-300 pt-6">
   <h3 className="text-xl font-bold text-gray-800 mb-4">Customer Reviews</h3>
 
   {reviews.length > 0 ? (
-    <>
-      <div className="grid gap-4">
+    <div className="mb-8 flex flex-col items-start gap-4">
+      {/* Fixed-width rating box (1/3 of screen max width) */}
+      <div className="w-full md:max-w-[33%] bg-gray-50 p-4 rounded-lg border border-gray-200 shadow-sm">
+        <div className="flex items-center gap-2 text-4xl font-bold text-yellow-500 mb-1">
+          {averageRating.toFixed(1)}
+          <span className="text-yellow-500 text-2xl">★</span>
+        </div>
+        <p className="text-sm text-gray-600 mb-4">{reviews.length} Ratings</p>
+
+        {/* Star Distribution */}
+        <div className="space-y-1">
+          {ratingBreakdown.map((count, index) => {
+            const star = 5 - index;
+            const percent = (count / reviews.length) * 100 || 0;
+            return (
+              <div key={star} className="flex items-center gap-2 text-sm">
+                <span className="w-6">{star}★</span>
+                <div className="bg-gray-200 w-full h-3 rounded">
+                  <div
+                    className="bg-yellow-400 h-3 rounded"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+                <span className="w-6 text-right">{count}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Individual Reviews (always full width, stacked below) */}
+      <div className="w-full flex flex-col gap-4">
         {(showAllReviews ? reviews : reviews.slice(0, 3)).map((review) => {
           const date =
             review.dateOfSubmit instanceof Date
@@ -371,12 +413,16 @@ fetchCategories();
             >
               <div className="flex items-center justify-between mb-2">
                 <p className="font-semibold text-gray-800">
-                  {review.name}{' '}
-                  <span className="text-sm text-gray-500 font-normal ml-2">{formattedDate}</span>
+                  {review.name}
+                  <span className="text-sm text-gray-500 font-normal ml-2">
+                    {formattedDate}
+                  </span>
                 </p>
                 <div className="text-yellow-500 text-sm">
                   {Array.from({ length: 5 }).map((_, index) => (
-                    <span key={index}>{index < review.rating ? '★' : '☆'}</span>
+                    <span key={index}>
+                      {index < review.rating ? '★' : '☆'}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -384,17 +430,18 @@ fetchCategories();
             </div>
           );
         })}
-      </div>
 
-      {reviews.length > 3 && (
-        <button
-          onClick={() => setShowAllReviews(!showAllReviews)}
-          className="mt-4 text-blue-600 hover:underline text-sm"
-        >
-          {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
-        </button>
-      )}
-    </>
+        {/* See More / Less */}
+        {reviews.length > 3 && (
+          <button
+            onClick={() => setShowAllReviews(!showAllReviews)}
+            className="text-blue-600 hover:underline text-sm"
+          >
+            {showAllReviews ? 'See Less Reviews' : 'See More Reviews'}
+          </button>
+        )}
+      </div>
+    </div>
   ) : (
     <p className="text-sm text-gray-500">No reviews yet.</p>
   )}
@@ -414,7 +461,9 @@ fetchCategories();
       className="w-full border px-3 py-2 rounded mb-2"
       rows={4}
       value={reviewForm.message}
-      onChange={(e) => setReviewForm({ ...reviewForm, message: e.target.value })}
+      onChange={(e) =>
+        setReviewForm({ ...reviewForm, message: e.target.value })
+      }
     />
     <div className="flex gap-1 mb-3 cursor-pointer">
       {Array.from({ length: 5 }).map((_, index) => (
@@ -423,7 +472,9 @@ fetchCategories();
           className={`text-2xl ${
             index < reviewForm.rating ? 'text-yellow-500' : 'text-gray-300'
           }`}
-          onClick={() => setReviewForm({ ...reviewForm, rating: index + 1 })}
+          onClick={() =>
+            setReviewForm({ ...reviewForm, rating: index + 1 })
+          }
         >
           ★
         </span>
@@ -437,6 +488,7 @@ fetchCategories();
     </button>
   </div>
 </section>
+
 </div>
 {/* Related Products */}
 {related.length > 0 && (
