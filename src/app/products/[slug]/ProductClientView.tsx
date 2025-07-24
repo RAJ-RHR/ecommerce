@@ -19,11 +19,7 @@ import Script from 'next/script';
 import Link from 'next/link';
 
 
-type ProductWithSlug = Product & {
-  slug: string;
-  meta_description?: string;
-  meta_keywords?: string;
-};
+
 
 type Review = {
   id?: string;
@@ -40,11 +36,18 @@ dateOfSubmit?: { seconds: number } | Date | null;
 };
 
 
-export default function ProductPage() {
+
+type ProductWithSlug = Product & {
+  slug: string;
+  meta_description?: string;
+  meta_keywords?: string;
+};
+
+export default function ProductClientView({ product }: { product: ProductWithSlug }) {
   const [showAllReviews, setShowAllReviews] = useState(false);
 
   const { slug } = useParams();
-  const [product, setProduct] = useState<ProductWithSlug | null>(null);
+  // const [product, setProduct] = useState<ProductWithSlug | null>(null);
   const [related, setRelated] = useState<ProductWithSlug[]>([]);
   const [categoryShowcase, setCategoryShowcase] = useState<ProductWithSlug[]>([]);
   const [availability, setAvailability] = useState<string>('');
@@ -90,7 +93,7 @@ export default function ProductPage() {
 };
 
 
-        setProduct(fetchedProduct);
+        // setProduct(fetchedProduct);
         setAvailability(data.availability || '');
         fetchRelated(fetchedProduct.category, fetchedProduct.slug);
         fetchReviews(docSnap.id);
