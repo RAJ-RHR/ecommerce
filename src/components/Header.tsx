@@ -61,7 +61,7 @@ export default function Header() {
 
         <Link href="/" className="flex items-center space-x-2">
           <img
-            src="/logo.png"
+            src="https://res.cloudinary.com/deijswbt1/image/upload/v1753527333/logo_sayg6g.png"
             alt="Herbolife Logo"
             className="h-24 w-auto transition-transform duration-200 hover:scale-105"
           />
